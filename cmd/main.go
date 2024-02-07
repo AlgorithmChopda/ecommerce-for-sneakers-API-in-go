@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
 	"github.com/joho/godotenv"
 )
@@ -25,5 +28,15 @@ func main() {
 		return
 	}
 
-	fmt.Println("Database connected successfully ", conn)
+	fmt.Println("Database connected successfully")
+
+	// Initialize Dependencies
+	deps := app.NewService(conn)
+	router := api.NewRouter(deps)
+
+	err = http.ListenAndServe("127.0.0.1:8000", router)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
