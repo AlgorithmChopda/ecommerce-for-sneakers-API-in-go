@@ -1,0 +1,868 @@
+openapi: 3.0.0
+info:
+  title: E-Commerce for Sneakers API
+  description: 
+    E-Commerce for Sneakers Backend API
+  contact:
+    email: vinay.chopda@joshsoftware.com
+  version: 1.0.0
+paths:
+  
+  /login:
+    post:
+      tags: 
+        - "auth"
+      summary: User/Seller Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "vinay@gmail.com"
+                password:
+                  type: string
+                  example: "vinay123"
+      responses:
+        '200':
+          description: login successful
+          content:
+            application/json:
+              example:
+                message: login successfull
+                token: token
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: invalid credentials
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                message: inavlid input
+  
+  /register:
+    post:
+      tags: 
+        - "auth"
+      summary: Buyer Registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                date_of_birth:
+                  type: string
+                mobile_no:
+                  type: string
+                address:
+                  type: string
+                city:
+                  type: string
+                postal_code:
+                  type: integer
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+                - mobile_no
+                - address
+                - city
+                - postal_code
+            example:
+              first_name: "vinay"
+              last_name: "chopda"
+              email: "vinay@gmail.com"
+              password: "vinay123"
+              date_of_birth: "20-12-1990"
+              mobile_no: "8789896787"
+              address: "Balewadi"
+              city: "Pune"
+              postal_code: 411045
+      responses:
+        '201':
+          description: Buyer registered successfully
+          content:
+            application/json:
+              example:
+                message: Buyer registered successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                message: invalid request input
+
+  
+  /logout:
+    post:
+      summary: Logout
+      tags:
+        - "auth"
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              example:
+                message: logout successful
+
+  /product:
+    get:
+      tags:
+        - "product"
+      summary: Get Products
+      parameters:
+        - name: color
+          in: query
+          description: Filter products by color
+          schema:
+            type: string
+        - name: size
+          in: query
+          description: Filter products by size
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: starting price
+          schema:
+            type: number
+        - name: end
+          in: query
+          description: ending price
+          schema:
+            type: number
+        - name: brand
+          in: query
+          description: Filter products by brand
+          schema:
+            type: string
+      responses: 
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: Product details fetched successfully
+                data:
+                  - name: "jordan"
+                    description: "exclusive shoes"
+                    category: "sneaker"
+                    seller_id: 1
+                    variety:
+                      - color: red
+                        image: link
+                        detail:
+                          - size: 7
+                            quantity: 50
+                            price: 500
+                            product_id: 1
+                          - size: 7
+                            quantity: 50
+                            price: 500
+                            product_id: 2
+                      - color: green
+                        image: link
+                        detail:
+                          - size: 7
+                            quantity: 50
+                            price: 500
+                            product_id: 3
+                          - size: 7
+                            quantity: 50
+                            price: 500
+                            product_id: 4
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                message: invalid request input
+    post:
+      tags:
+        - "product"
+      summary: Add a New Product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "jordan"
+              description: "exclusive shoes"
+              category: "sneaker"
+              variety:
+                - color: red
+                  image: link
+                  detail:
+                    - size: 7
+                      quantity: 50
+                      price: 500
+                    - size: 7
+                      quantity: 50
+                      price: 500
+                - color: green
+                  image: link
+                  detail:
+                    - size: 8
+                      quantity: 50
+                      price: 500
+                    - size: 7
+                      quantity: 10
+      responses:
+        '201':
+          description: Product added successfully
+          content:
+            application/json:
+              example:
+                message: Product added successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                message: invalid request input
+  
+  /product/{id}:
+    get:
+      tags:
+        - "product"
+      summary: Get Product Details by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: Product details retrieved successfully
+                data:
+                  name: "jordan"
+                  description: "exclusive shoes"
+                  category: "sneaker"
+                  seller_id: 1
+                  variety:
+                    - color: red
+                      image: link
+                      detail:
+                        - size: 7
+                          quantity: 50
+                          price: 500
+                          product_id: 1
+                        - size: 8
+                          quantity: 50
+                          price: 500
+                          product_id: 2
+                    - color: green
+                      image: link
+                      detail:
+                        - size: 7
+                          quantity: 50
+                          price: 500
+                          product_id: 3
+                        - size: 8
+                          quantity: 50
+                          price: 500
+                          product_id: 4
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              example:
+                message: Product not found
+    patch:
+      tags:
+        - "product"
+      summary: Update Product Details by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "updated name"
+              description: "updated description"
+              brand: "updated brand"
+      responses:
+        '200':
+          description: Successful update
+          content:
+            application/json:
+              example:
+                message: Product details updated successfully
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              example:
+                message: Product not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthorized access to update product.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                message: invalid request data
+  
+  /cart/{cartid}:
+    get:
+      tags:
+        - "cart"
+      summary: Get Cart Details
+      parameters:
+        - name: cartid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: Cart fetched successfully
+                data:
+                  - name: "Jordan"
+                    image: "link"
+                    color: "red"
+                    size: 8
+                    brand: "Nike"
+                    product_id: "1"
+                    quantity: 5
+                    price: 7000
+                    total_amount: 35000
+                  - name: "Jump"
+                    image: "link"
+                    color: "red"
+                    size: 8
+                    brand: "Puma"
+                    product_id: "2"
+                    quantity: 2
+                    price: 5000
+                    total_amount: 10000
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: Cart not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: Unauthorized access to cart
+  
+  /cart/{cartid}/count:
+    get:
+      tags:
+        - "cart"
+      summary: Get Total Item Count in Cart
+      parameters:
+        - name: cartid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: cart item count fetched successfully
+                data:
+                  total_items: 7
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: cart not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: unauthorized access to cart
+  
+  /cart/{cartid}/{productid}:
+    post:
+      tags:
+        - "cart"
+      summary: Add Product to Cart
+      parameters:
+        - name: cartid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: integer
+        - name: productid
+          in: path
+          description: ID of the product
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              quantity: 2
+              price: 500
+      responses:
+        '200':
+          description: Successful addition to cart
+          content:
+            application/json:
+              example:
+                message: product added to cart successfully
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: cart or product not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: unauthorized access to cart
+        '422':
+          description: unprocessable Entity
+          content:
+            application/json:
+              example:
+                message: insufficient quantity in stock
+    put:
+      tags:
+        - "cart"
+      summary: Update Product in Cart
+      parameters:
+        - name: cartid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: integer
+        - name: productid
+          in: path
+          description: ID of the product
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              quantity: 3
+      responses:
+        '200':
+          description: Successful update of product quantity in cart
+          content:
+            application/json:
+              example:
+                message: product in cart updated successfully
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: cart or product not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: unauthorized access to cart
+        '422':
+          description: unprocessable Entity
+          content:
+            application/json:
+              example:
+                message: insufficient quantity in stock
+  
+  /cart/{cartid}/order:
+    post:
+      summary: Place Order
+      tags:
+        - "cart"
+      parameters:
+        - name: cartid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful order placement
+          content:
+            application/json:
+              example:
+                message: order placed successfully
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: Cart not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: unauthorized request
+  
+  /order:
+    get:
+      summary: Get all Orders of a User
+      tags:
+        - "order"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: order history fetched successfully
+                data:
+                  - order_id: 1
+                    amount: 18278
+                    order_date: "17-10-2023"
+                  - order_id: 2
+                    amount: 8987
+                    order_date: "12-1-2024"
+
+  /order/{id}:
+    get:
+      summary: Get Specific Order Details
+      tags:
+        - "order"
+      parameters:
+        - name: id
+          in: path
+          description: ID of the order
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: order fetched successfully
+                data:
+                  items:
+                    - name: "Jordan"
+                      image: "link"
+                      color: "red"
+                      size: 8
+                      brand: "Nike"
+                      product_id: "1"
+                      quantity: 5
+                      price: 7000
+                      total_amount: 35000
+                    - name: "Jump"
+                      image: "link"
+                      color: "red"
+                      size: 8
+                      brand: "Puma"
+                      product_id: "2"
+                      quantity: 2
+                      price: 5000
+                      total_amount: 10000
+                  total_amount: 428323
+                  order_date: "12-1-2024"
+                  shipping_address: "Pune"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: order not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: unauthorized request
+                
+  /admin/login:
+    post:
+      summary: Admin Login
+      tags:
+        - "admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Admin login successful
+          content:
+            application/json:
+              example:
+                message: admin login successful
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                message: invalid credentails
+
+  /admin/supplier:
+    get:
+      summary: Get List of All Suppliers
+      tags:
+        - "admin"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: suppliers fetched successfully
+                data:
+                  - first_name: "John"
+                    last_name: "Doe"
+                    email: "john@example.com"
+                    date_of_birth: "1990-01-01"
+                    company_id: 1
+                    company_name: "ABC Inc."
+                    company_address: "123 Main St"
+                    is_verified: Yes
+                  - first_name: "Jane"
+                    last_name: "Doe"
+                    email: "jane@example.com"
+                    date_of_birth: "1992-05-15"
+                    company_id: 2
+                    company_name: "XYZ Ltd."
+                    company_address: "456 Oak St"
+                    is_verified: No
+    post:
+      tags: 
+        - "admin"
+      summary: Seller Registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                date_of_birth:
+                  type: string
+                mobile_no:
+                  type: string
+                address:
+                  type: string
+                city:
+                  type: string
+                postal_code:
+                  type: integer
+                company_name:
+                  type: string
+                company_address:
+                  type: string
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+                - mobile_no
+                - address
+                - city
+                - postal_code
+                - company_name
+                - company_address
+            example:
+              first_name: "vinay"
+              last_name: "chopda"
+              email: "vinay@gmail.com"
+              password: "vinay123"
+              date_of_birth: "20-12-1990"
+              mobile_no: "8789896787"
+              address: "Balewadi"
+              city: "Pune"
+              postal_code: 411045
+              company_name: "abc"
+              company_address: "mumbai"
+              
+      responses:
+        '200':
+          description: Seller registration
+          content:
+            application/json:
+              example:
+                message: registration successfull
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                message: invalid request input 
+  
+
+  /admin/supplier/{id}:
+    get:
+      summary: Get Supplier Details
+      tags:
+        - "admin"
+      parameters:
+        - name: id
+          in: path
+          description: ID of the supplier
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                message: supplier details fetched successfully
+                data:
+                  first_name: "John"
+                  last_name: "Doe"
+                  email: "john@example.com"
+                  date_of_birth: "1990-01-01"
+                  company_id: 1
+                  company_name: "ABC Inc."
+                  company_address: "123 Main St"
+                  is_verified: Yes
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: no such supplier found
+
+    delete:
+      summary: Delete Supplier Account
+      tags:
+        - "admin"
+      parameters:
+        - name: id
+          in: path
+          description: ID of the supplier
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Supplier account deleted successfully
+          content:
+            application/json:
+              example:
+                message: supplier account deleted successfully
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                message: no such supplier found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: unauthorized request
+  
+  /admin/supplier/{id}/verify:
+    post:
+      summary: Verify Supplier Account
+      tags:
+        - "admin"
+      parameters:
+        - name: id
+          in: path
+          description: ID of the supplier
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Supplier account verified
+          content:
+            application/json:
+              example:
+                message: supplier account verified
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              example:
+                status: error
+                message: no such supplier found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unauthorized request
+  
+  
+        
