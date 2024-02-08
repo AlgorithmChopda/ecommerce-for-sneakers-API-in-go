@@ -9,6 +9,7 @@ import (
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
 )
 
+// Buyer type
 type RegisterUserRequest struct {
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
@@ -27,14 +28,11 @@ type LoginUserRequest struct {
 }
 
 func (req *RegisterUserRequest) Validate() error {
-	fmt.Println("in validate")
-
 	err := ValidateStruct(*req)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("request validate successfully")
 	return nil
 }
 
@@ -51,6 +49,22 @@ func (req *LoginUserRequest) Validate() error {
 	return nil
 }
 
+// Seller Type
+type RegisterSellerRequest struct {
+	RegisterUserRequest
+	CompanyName    string `json:"company_name"`
+	CompanyAddress string `json:"company_address"`
+}
+
+func (req *RegisterSellerRequest) Validate() error {
+	err := ValidateStruct(*req)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// TODO move to different file
 func ValidateStruct(req interface{}) error {
 	v := reflect.ValueOf(req)
 
