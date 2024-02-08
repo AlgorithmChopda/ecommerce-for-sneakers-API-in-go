@@ -88,6 +88,12 @@ func ValidateStruct(req interface{}) error {
 				return errors.New(fmt.Sprintf("Field '%s' is not present or has invalid value", v.Type().Field(i).Name))
 			}
 		}
+
+		if fieldType.Kind() == reflect.Struct {
+			if err := ValidateStruct(fieldValue); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
