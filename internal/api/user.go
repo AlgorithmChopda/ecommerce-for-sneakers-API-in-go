@@ -19,9 +19,6 @@ func LoginUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.
 
 func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// handle context
-		_ = r.Context()
-
 		var req dto.RegisterUserRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
@@ -41,6 +38,6 @@ func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *ht
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, "a", "request successfull")
+		middleware.SuccessResponse(w, http.StatusAccepted, nil, "request successfull")
 	}
 }

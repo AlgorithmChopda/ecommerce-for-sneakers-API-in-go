@@ -2,8 +2,6 @@ package repository
 
 import (
 	"time"
-
-	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 )
 
 type User struct {
@@ -24,5 +22,5 @@ type User struct {
 }
 
 type UserRepository interface {
-	CreateUser(userInfo dto.RegisterUserRequest) error
+	CreateUser(userInfo []any) error
 }

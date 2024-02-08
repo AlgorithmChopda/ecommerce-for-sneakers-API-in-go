@@ -13,7 +13,9 @@ type Dependencies struct {
 
 func NewService(db *sql.DB) Dependencies {
 	userRepo := repository.NewUserRepository(db)
-	userSvc := user.NewService(userRepo)
+	roleRepo := repository.NewRoleRepository(db)
+
+	userSvc := user.NewService(userRepo, roleRepo)
 
 	return Dependencies{
 		UserService: userSvc,
