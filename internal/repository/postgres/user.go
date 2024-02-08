@@ -27,6 +27,21 @@ func (user *userStore) CreateUser(userInfo []any) error {
 	return nil
 }
 
+func (user *userStore) IsUserWithEmailPresent(email string) bool {
+	row := user.DB.QueryRow(GetUserWithEmail, email)
+
+	var userEmail string
+	err := row.Scan(&userEmail)
+
+	// if user with email does not exist
+	if err != nil {
+		return false
+	}
+
+	// if user found
+	return true
+}
+
 func (user *userStore) CheckUserWithEmailAndPassword(email, password string) error {
 	row := user.DB.QueryRow(GetUserWithEmailAndPassword, email, password)
 

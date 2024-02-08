@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app/user"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/middleware"
 )
@@ -27,11 +28,12 @@ func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *ht
 
 		err = userSvc.RegisterUser(req)
 		if err != nil {
-			middleware.ErrorResponse(w, http.StatusInternalServerError, err)
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, nil, "request successfull")
+		middleware.SuccessResponse(w, http.StatusAccepted, nil, "User Created")
 	}
 }
 
@@ -56,6 +58,8 @@ func LoginUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, struct{ token string }{token}, "login successfull")
+		middleware.SuccessResponse(w, http.StatusAccepted, struct {
+			Token string `json:"token"`
+		}{Token: token}, "login successfull")
 	}
 }

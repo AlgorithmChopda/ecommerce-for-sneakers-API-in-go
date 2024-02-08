@@ -6,3 +6,5 @@ var InsertUserQuery = `INSERT INTO users (first_name, last_name, email, password
 var GetUserWithEmailAndPassword = `select email, password from users where email=$1 and password=$2`
 
 var GetIdRoleAndPassword = `select id, role_id, password from users where email=$1`
+
+var GetUserWithEmail = `select email from users where email=$1`

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/helpers"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
@@ -31,6 +32,11 @@ func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest) error {
 	parsedDOB, err := helpers.ParseDate(userInfo.DateOfBirth)
 	if err != nil {
 		return err
+	}
+
+	isPresent := svc.userRepo.IsUserWithEmailPresent(userInfo.Email)
+	if isPresent {
+		return apperrors.UserAlreadyPresent{}
 	}
 
 	roleId, err := svc.roleRepo.GetRoleId("buyer")

@@ -25,4 +25,5 @@ type UserRepository interface {
 	CreateUser(userInfo []any) error
 	CheckUserWithEmailAndPassword(email, password string) error
 	GetIdRoleAndPassword(email string) (int, int, string, error)
+	IsUserWithEmailPresent(email string) bool
 }
