@@ -1,6 +1,9 @@
 package user
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/helpers"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
@@ -14,6 +17,7 @@ type service struct {
 
 type Service interface {
 	RegisterUser(userInfo dto.RegisterUserRequest) error
+	LoginUser(email, passsword string) (string, error)
 }
 
 func NewService(userRepoObject repository.UserRepository, roleRepoObject repository.RoleRepository) Service {
@@ -58,4 +62,25 @@ func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest) error {
 	}
 
 	return nil
+}
+
+// TODO: handle token, register use all case - if email already exists and error handling
+func (svc *service) LoginUser(email, passsword string) (string, error) {
+	id, role, hashedPassword, err := svc.userRepo.GetIdRoleAndPassword(email)
+	if err != nil {
+		return "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(passsword))
+	if err != nil {
+		return "", errors.New("Invalid login details")
+	}
+
+	token, err := helpers.CreateToken(id, role)
+	if err != nil {
+		fmt.Println("Error :", err)
+		return "", errors.New("error while creating token : ")
+	}
+
+	return token, nil
 }

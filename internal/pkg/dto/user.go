@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"regexp"
+
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
 )
 
 type RegisterUserRequest struct {
@@ -18,6 +21,11 @@ type RegisterUserRequest struct {
 	PostalCode  int    `json:"postal_code"`
 }
 
+type LoginUserRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 func (req *RegisterUserRequest) Validate() error {
 	fmt.Println("in validate")
 
@@ -27,6 +35,19 @@ func (req *RegisterUserRequest) Validate() error {
 	}
 
 	fmt.Println("request validate successfully")
+	return nil
+}
+
+func (req *LoginUserRequest) Validate() error {
+	err := ValidateStruct(*req)
+	if err != nil {
+		return err
+	}
+	_, err = regexp.Match(constants.EMAIL_REGEX, []byte(req.Email))
+	if err != nil {
+		return errors.New("invalid email")
+	}
+
 	return nil
 }
 

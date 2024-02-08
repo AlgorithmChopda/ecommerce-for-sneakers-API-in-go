@@ -23,4 +23,6 @@ type User struct {
 
 type UserRepository interface {
 	CreateUser(userInfo []any) error
+	CheckUserWithEmailAndPassword(email, password string) error
+	GetIdRoleAndPassword(email string) (int, int, string, error)
 }
