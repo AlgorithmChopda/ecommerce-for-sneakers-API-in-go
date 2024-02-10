@@ -57,7 +57,21 @@ type ResponseVarities struct {
 	Price    float64 `json:"price"`
 }
 
+type UpdateProductRequest struct {
+	Name        string
+	Description string
+}
+
 func (req *CreateProductRequest) Validate() error {
+	err := ValidateStruct(*req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (req *UpdateProductRequest) Validate() error {
 	err := ValidateStruct(*req)
 	if err != nil {
 		return err

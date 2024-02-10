@@ -15,6 +15,7 @@ type service struct {
 type Service interface {
 	CreateProduct(product dto.CreateProductRequest) error
 	GetProductByID(productId int) (dto.ResponseProduct, error)
+	UpdateProduct(req dto.UpdateProductRequest, productId int) error
 }
 
 func NewService(productRepoObject repository.ProductRepository, brandRepoObject repository.BrandRepository) Service {
@@ -77,4 +78,13 @@ func (productSvc *service) GetProductByID(productId int) (dto.ResponseProduct, e
 	}
 
 	return product, err
+}
+
+func (productSvc *service) UpdateProduct(req dto.UpdateProductRequest, productId int) error {
+	err := productSvc.productRepo.UpdateProduct(productId, req.Name, req.Description)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

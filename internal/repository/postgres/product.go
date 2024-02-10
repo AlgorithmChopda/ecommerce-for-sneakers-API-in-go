@@ -101,3 +101,23 @@ func (product *productStore) GetProductById(productId int) (dto.ResponseProduct,
 	}
 	return productObject, nil
 }
+
+func (product *productStore) UpdateProduct(productId int, name, description string) error {
+	res, err := product.DB.Exec(UpdateProduct, productId, name, description)
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("error while updating product")
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("error while updating product")
+	}
+
+	if rowsAffected == 0 {
+		return apperrors.ProductNotFound{}
+	}
+
+	return nil
+}

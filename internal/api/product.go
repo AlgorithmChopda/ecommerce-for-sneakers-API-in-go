@@ -55,3 +55,35 @@ func GetProductHandler(productSvc product.Service) func(w http.ResponseWriter, r
 		middleware.SuccessResponse(w, http.StatusOK, product, "Product Fetched")
 	}
 }
+
+func UpdateProductHandler(productSvc product.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		productId, err := helpers.GetPathParameterId(r)
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		var req dto.UpdateProductRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		err = req.Validate()
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		err = productSvc.UpdateProduct(req, productId)
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusOK, nil, "product updated")
+	}
+}
