@@ -39,7 +39,7 @@ func CreateProductHandler(productSvc product.Service) func(w http.ResponseWriter
 
 func GetProductHandler(productSvc product.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		productId, err := helpers.GetPathParameterId(r)
+		productId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
 			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
@@ -59,7 +59,7 @@ func GetProductHandler(productSvc product.Service) func(w http.ResponseWriter, r
 func UpdateProductHandler(productSvc product.Service) func(w http.ResponseWriter, r *http.Request) {
 	// TODO handle updated brand
 	return func(w http.ResponseWriter, r *http.Request) {
-		productId, err := helpers.GetPathParameterId(r)
+		productId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
 			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return

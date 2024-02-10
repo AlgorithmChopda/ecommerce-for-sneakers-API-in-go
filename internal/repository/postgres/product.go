@@ -97,7 +97,7 @@ func (product *productStore) GetProductById(productId int) (dto.ResponseProduct,
 
 	// if no product found
 	if isFirstProduct {
-		return dto.ResponseProduct{}, apperrors.ProductNotFound{}
+		return dto.ResponseProduct{}, apperrors.NotFoundError{Message: "no such product found"}
 	}
 	return productObject, nil
 }
@@ -116,7 +116,7 @@ func (product *productStore) UpdateProduct(productId int, name, description stri
 	}
 
 	if rowsAffected == 0 {
-		return apperrors.ProductNotFound{}
+		return apperrors.NotFoundError{Message: "no such product found"}
 	}
 
 	return nil

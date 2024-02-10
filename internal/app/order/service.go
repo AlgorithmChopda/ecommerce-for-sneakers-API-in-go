@@ -2,6 +2,7 @@ package order
 
 import (
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
 )
 
@@ -11,6 +12,7 @@ type service struct {
 
 type Service interface {
 	CreateOrder(userId int) (int, error)
+	AddProductToOrder(userId, orderId, productDetailId int, product dto.ProductCartRequest) error
 }
 
 func NewService(orderRepoObject repository.OrderRepository) Service {
@@ -34,4 +36,22 @@ func (orderSvc *service) CreateOrder(userId int) (int, error) {
 	}
 
 	return cartId, nil
+}
+
+func (orderSvc *service) AddProductToOrder(userId, orderId, productDetailId int, product dto.ProductCartRequest) error {
+	buyerId, err := orderSvc.orderRepo.GetBuyerId(orderId)
+	if err != nil {
+		return err
+	}
+
+	if buyerId != userId {
+		return apperrors.UnauthorizedAccess{Message: "Unauthorized access"}
+	}
+
+	err = orderSvc.orderRepo.AddProductToOrder(userId, orderId, productDetailId, product.Quantity)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

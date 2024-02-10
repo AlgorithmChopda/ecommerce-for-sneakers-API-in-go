@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type CreateProductRequest struct {
 	Name        string    `json:"name"`
@@ -75,6 +78,18 @@ func (req *UpdateProductRequest) Validate() error {
 	err := ValidateStruct(*req)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+type ProductCartRequest struct {
+	Quantity int
+}
+
+func (req ProductCartRequest) Validate() error {
+	if req.Quantity <= 0 {
+		return errors.New("invalid product quantity")
 	}
 
 	return nil
