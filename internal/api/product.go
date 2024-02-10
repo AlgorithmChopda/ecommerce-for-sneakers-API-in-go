@@ -57,6 +57,7 @@ func GetProductHandler(productSvc product.Service) func(w http.ResponseWriter, r
 }
 
 func UpdateProductHandler(productSvc product.Service) func(w http.ResponseWriter, r *http.Request) {
+	// TODO handle updated brand
 	return func(w http.ResponseWriter, r *http.Request) {
 		productId, err := helpers.GetPathParameterId(r)
 		if err != nil {

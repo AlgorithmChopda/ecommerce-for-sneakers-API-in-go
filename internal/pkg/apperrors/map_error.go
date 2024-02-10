@@ -8,6 +8,8 @@ func MapError(err error) (statusCode int, errResponse error) {
 		return http.StatusConflict, err
 	case ProductNotFound:
 		return http.StatusNotFound, err
+	case CartAlreadyPresent:
+		return http.StatusConflict, err
 	default:
 		return http.StatusInternalServerError, err
 	}

@@ -11,3 +11,9 @@ type ProductNotFound struct{}
 func (p ProductNotFound) Error() string {
 	return "no such product found"
 }
+
+type CartAlreadyPresent struct{}
+
+func (p CartAlreadyPresent) Error() string {
+	return "cart already present"
+}

@@ -28,7 +28,6 @@ func (seller *sellerStore) CreateSeller(sellerInfo []any) error {
 func (seller *sellerStore) CreateCompany(sellerCompanyInfo []any) (int64, error) {
 	var companyId int64
 	err := seller.DB.QueryRow(CreateCompanyQuery, sellerCompanyInfo...).Scan(&companyId)
-	// row, err := seller.DB.Exec(CreateCompanyQuery, sellerCompanyInfo...)
 	if err != nil {
 		return 0, err
 	}
