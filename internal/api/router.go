@@ -22,6 +22,7 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	// Product
 	productRouter := router.PathPrefix("/product").Subrouter()
 	productRouter.HandleFunc("", CreateProductHandler(deps.ProductService)).Methods(http.MethodPost)
+	productRouter.HandleFunc("/{id}", GetProductHandler(deps.ProductService)).Methods(http.MethodGet)
 
 	return router
 }
