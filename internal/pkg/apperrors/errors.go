@@ -29,3 +29,9 @@ type UnauthorizedAccess struct{ Message string }
 func (u UnauthorizedAccess) Error() string {
 	return u.Message
 }
+
+type EmptyError struct{ Message string }
+
+func (e EmptyError) Error() string {
+	return e.Message
+}

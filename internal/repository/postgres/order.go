@@ -158,3 +158,58 @@ func (order *orderStore) UpdateOrderItem(userId, cartId, productDetailId, requir
 	// TODO handle if quantity is set to 0
 	return nil
 }
+
+func (order *orderStore) PlaceOrder(userId, orderId int, shippingAddress string) error {
+	isPresent, err := order.IsOrderPresentWithOrderId(orderId)
+	if err != nil {
+		return err
+	}
+
+	if !isPresent {
+		return apperrors.NotFoundError{Message: "no cart found"}
+	}
+
+	orderItemCount, err := order.GetOrderItemCount(orderId)
+	if err != nil {
+		return err
+	}
+
+	if orderItemCount == 0 {
+		return apperrors.EmptyError{Message: "cart is empty"}
+	}
+
+	rows, err := order.DB.Exec(PlaceOrder, orderId, shippingAddress)
+	if err != nil {
+		return errors.New("error while placing order")
+	}
+
+	rowsAffected, err := rows.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		return errors.New("error while placing order")
+	}
+
+	return nil
+}
+
+func (order *orderStore) GetOrderItemCount(orderId int) (int, error) {
+	var orderItemCount int
+	err := order.DB.QueryRow(GetOrderItemCount, orderId).Scan(&orderItemCount)
+	if err != nil {
+		return -1, apperrors.NotFoundError{Message: "no such cart found"}
+	}
+
+	return orderItemCount, nil
+}
+
+func (order *orderStore) IsOrderPresentWithOrderId(orderId int) (bool, error) {
+	rows, err := order.DB.Query(OrderWithOrderId, orderId)
+	if err != nil {
+		fmt.Println(err)
+		return false, errors.New("error while checking order for user")
+	}
+
+	if rows.Next() {
+		return true, nil
+	}
+	return false, nil
+}

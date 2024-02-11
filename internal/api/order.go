@@ -117,3 +117,42 @@ func UpdateOrderItemHandler(orderSvc order.Service) func(w http.ResponseWriter, 
 		middleware.SuccessResponse(w, http.StatusOK, nil, "product in cart updated")
 	}
 }
+
+func PlaceOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO take userId from token
+		userId := 2
+		orderId, err := helpers.GetPathParameter(r, "id")
+		if err != nil {
+			if err != nil {
+				middleware.ErrorResponse(w, http.StatusBadRequest, err)
+				return
+			}
+		}
+
+		var req struct {
+			ShippingAddress string `json:"shipping_address"`
+		}
+
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		if req.ShippingAddress == "" {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		err = orderSvc.PlaceOrder(userId, orderId, req.ShippingAddress)
+
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusOK, nil, "order placed successfully")
+	}
+}

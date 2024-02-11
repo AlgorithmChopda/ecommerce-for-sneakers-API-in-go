@@ -14,6 +14,8 @@ func MapError(err error) (statusCode int, errResponse error) {
 		return http.StatusBadRequest, err
 	case UnauthorizedAccess:
 		return http.StatusUnauthorized, err
+	case EmptyError:
+		return http.StatusBadRequest, err
 	default:
 		return http.StatusInternalServerError, err
 	}
