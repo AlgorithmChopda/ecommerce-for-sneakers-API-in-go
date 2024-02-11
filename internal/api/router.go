@@ -28,6 +28,7 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	// Order / Cart
 	orderRouter := router.PathPrefix("/cart").Subrouter()
 	orderRouter.HandleFunc("", CreateOrderHandler(deps.OrderService)).Methods(http.MethodPost)
+	orderRouter.HandleFunc("/{id}", GetAllOrderItemsHandler(deps.OrderService)).Methods(http.MethodGet)
 	orderRouter.HandleFunc("/{id}/order", PlaceOrderHandler(deps.OrderService)).Methods(http.MethodPost)
 	orderRouter.HandleFunc("/{id}/{productDetailId}", AddOrderHandler(deps.OrderService)).Methods(http.MethodPost)
 	orderRouter.HandleFunc("/{id}/{productDetailId}", UpdateOrderItemHandler(deps.OrderService)).Methods(http.MethodPut)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
 )
 
@@ -50,10 +51,23 @@ func (order *orderStore) GetBuyerId(orderId int) (int, error) {
 	err := row.Scan(&buyerId)
 
 	if err != nil {
-		return -1, apperrors.NotFoundError{Message: "cart not found"}
+		return -1, apperrors.NotFoundError{Message: "no cart found"}
 	}
 
 	return buyerId, nil
+}
+
+func (order *orderStore) CheckOrderValid(userId, orderId int) (bool, error) {
+	rows, err := order.DB.Query(CheckOrderValid, userId, orderId)
+	if err != nil {
+		fmt.Println(err)
+		return false, errors.New("error while checking cart for user")
+	}
+
+	if rows.Next() {
+		return true, nil
+	}
+	return false, nil
 }
 
 func (order *orderStore) AddProductToOrder(userId, cartId, productDetailId, requiredQuantity int) error {
@@ -83,7 +97,7 @@ func (order *orderStore) AddProductToOrder(userId, cartId, productDetailId, requ
 	}
 
 	if rowsAffected == 0 {
-		return apperrors.NotFoundError{Message: "cart not found"}
+		return apperrors.NotFoundError{Message: "no cart found"}
 	}
 
 	// TODO handle if product already present
@@ -141,7 +155,7 @@ func (order *orderStore) UpdateOrderItem(userId, cartId, productDetailId, requir
 	}
 
 	if rowsAffected == 0 {
-		return apperrors.NotFoundError{Message: "cart not found"}
+		return apperrors.NotFoundError{Message: "no cart found"}
 	}
 
 	// update product in cart
@@ -212,4 +226,50 @@ func (order *orderStore) IsOrderPresentWithOrderId(orderId int) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func (order *orderStore) GetAllOrderItems(orderId int) (any, error) {
+	rows, err := order.DB.Query(GetOrderItems, orderId)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("error while fetching cart items")
+	}
+
+	var orderItems []dto.OrderItemResponse
+
+	for rows.Next() {
+		var currentProduct dto.OrderItemResponse
+		err := rows.Scan(
+			&currentProduct.Name,
+			&currentProduct.Description,
+			&currentProduct.Size,
+			&currentProduct.Color,
+			&currentProduct.Image,
+			&currentProduct.Price,
+			&currentProduct.Quantity,
+		)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("error while fetching cart items")
+		}
+
+		orderItems = append(orderItems, currentProduct)
+	}
+
+	var totalAmount float64
+	err = order.DB.QueryRow(GetOrderAmount, orderId).Scan(&totalAmount)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("error while fetching cart items")
+	}
+
+	result := struct {
+		TotalAmount float64                 `json:"total_amount"`
+		OrderItems  []dto.OrderItemResponse `json:"order_items"`
+	}{
+		TotalAmount: totalAmount,
+		OrderItems:  orderItems,
+	}
+
+	return result, nil
 }

@@ -24,3 +24,15 @@ const PlaceOrder = `UPDATE orders SET is_cart = '0', order_date = CURRENT_TIMEST
 const GetOrderItemCount = `SELECT COUNT(*) AS item_count FROM orderitem WHERE order_id = $1;`
 
 const OrderWithOrderId = `SELECT * FROM orders where id = $1 and is_cart = '1'`
+
+const GetOrderItems = ` SELECT 	p.name, p.description, pd.size, pd.color, pd.image, pd.price, oi.quantity
+						FROM orderitem AS oi
+						JOIN productdetail AS pd
+						ON oi.product_detail_id = pd.id
+						JOIN product AS p
+						ON pd.product_id = p.id
+						WHERE oi.order_id = $1;`
+
+const GetOrderAmount = `SELECT total_amount FROM orders where id = $1`
+
+const CheckOrderValid = `SELECT * FROM orders where buyer_id = $1 and id = $2 and is_cart = '1'`

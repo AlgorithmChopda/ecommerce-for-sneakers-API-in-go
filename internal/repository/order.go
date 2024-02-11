@@ -8,4 +8,6 @@ type OrderRepository interface {
 	UpdateOrderItem(userId, cartId, productDetailId, requiredQuantity int) error
 	PlaceOrder(userId, orderId int, shippingAddress string) error
 	GetOrderItemCount(orderId int) (int, error)
+	GetAllOrderItems(orderId int) (any, error)
+	CheckOrderValid(userId, orderId int) (bool, error)
 }

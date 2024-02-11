@@ -15,6 +15,7 @@ type Service interface {
 	AddProductToOrder(userId, orderId, productDetailId int, product dto.ProductCartRequest) error
 	UpdateProductInCart(userId, orderId, productDetailId int, product dto.ProductCartRequest) error
 	PlaceOrder(userId, orderId int, shipping_address string) error
+	GetAllOrderItems(userId, orderId int) (any, error)
 }
 
 func NewService(orderRepoObject repository.OrderRepository) Service {
@@ -50,7 +51,7 @@ func (orderSvc *service) AddProductToOrder(userId, orderId, productDetailId int,
 		return apperrors.UnauthorizedAccess{Message: "Unauthorized access"}
 	}
 
-	isCartPresent, err := orderSvc.orderRepo.IsOrderPresent(userId)
+	isCartPresent, err := orderSvc.orderRepo.CheckOrderValid(userId, orderId)
 	if err != nil {
 		return err
 	}
@@ -77,7 +78,7 @@ func (orderSvc *service) UpdateProductInCart(userId, orderId, productDetailId in
 		return apperrors.UnauthorizedAccess{Message: "Unauthorized access"}
 	}
 
-	isCartPresent, err := orderSvc.orderRepo.IsOrderPresent(userId)
+	isCartPresent, err := orderSvc.orderRepo.CheckOrderValid(userId, orderId)
 	if err != nil {
 		return err
 	}
@@ -110,4 +111,34 @@ func (orderSvc *service) PlaceOrder(userId, orderId int, shipping_address string
 	}
 
 	return nil
+}
+
+func (orderSvc *service) GetAllOrderItems(userId, orderId int) (any, error) {
+	// if cart present or not ?
+	// if accessing cart is authorized or not
+	buyerId, err := orderSvc.orderRepo.GetBuyerId(orderId)
+	if err != nil {
+		return nil, err
+	}
+
+	if buyerId != userId {
+		return nil, apperrors.UnauthorizedAccess{Message: "Unauthorized access"}
+	}
+
+	isCartPresent, err := orderSvc.orderRepo.CheckOrderValid(userId, orderId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !isCartPresent {
+		return nil, apperrors.NotFoundError{Message: "no cart found"}
+	}
+
+	orderItems, err := orderSvc.orderRepo.GetAllOrderItems(orderId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return orderItems, err
 }
