@@ -16,6 +16,7 @@ type service struct {
 
 type Service interface {
 	RegisterSeller(sellerInfo dto.RegisterSellerRequest) error
+	GetSellerList() ([]dto.SellerResponseObject, error)
 }
 
 func NewService(sellerRepoObject repository.SellerRepository, userRepoObject repository.UserRepository, roleRepoObject repository.RoleRepository) Service {
@@ -26,18 +27,18 @@ func NewService(sellerRepoObject repository.SellerRepository, userRepoObject rep
 	}
 }
 
-func (svc *service) RegisterSeller(sellerInfo dto.RegisterSellerRequest) error {
+func (sellerSvc *service) RegisterSeller(sellerInfo dto.RegisterSellerRequest) error {
 	parsedDOB, err := helpers.ParseDate(sellerInfo.DateOfBirth)
 	if err != nil {
 		return err
 	}
 
-	isPresent := svc.userRepo.IsUserWithEmailPresent(sellerInfo.Email)
+	isPresent := sellerSvc.userRepo.IsUserWithEmailPresent(sellerInfo.Email)
 	if isPresent {
 		return apperrors.UserAlreadyPresent{}
 	}
 
-	roleId, err := svc.roleRepo.GetRoleId("seller")
+	roleId, err := sellerSvc.roleRepo.GetRoleId("seller")
 	if err != nil {
 		return err
 	}
@@ -52,7 +53,7 @@ func (svc *service) RegisterSeller(sellerInfo dto.RegisterSellerRequest) error {
 		sellerInfo.CompanyAddress,
 	}
 
-	companyId, err := svc.sellerRepo.CreateCompany(companyDetail)
+	companyId, err := sellerSvc.sellerRepo.CreateCompany(companyDetail)
 	if err != nil {
 		return err
 	}
@@ -71,10 +72,24 @@ func (svc *service) RegisterSeller(sellerInfo dto.RegisterSellerRequest) error {
 		companyId,
 	}
 
-	err = svc.sellerRepo.CreateSeller(values)
+	err = sellerSvc.sellerRepo.CreateSeller(values)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (sellerSvc *service) GetSellerList() ([]dto.SellerResponseObject, error) {
+	roleId, err := sellerSvc.roleRepo.GetRoleId("seller")
+	if err != nil {
+		return nil, err
+	}
+
+	sellerList, err := sellerSvc.sellerRepo.GetAllSellers(roleId)
+	if err != nil {
+		return nil, err
+	}
+
+	return sellerList, nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"time"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
 )
@@ -54,6 +55,21 @@ type RegisterSellerRequest struct {
 	RegisterUserRequest
 	CompanyName    string `json:"company_name"`
 	CompanyAddress string `json:"company_address"`
+}
+
+type SellerResponseObject struct {
+	FirstName      string    `json:"first_name"`
+	LastName       string    `json:"last_name"`
+	Email          string    `json:"email"`
+	DateOfBirth    time.Time `json:"date_of_birth"`
+	MobileNumber   int       `json:"mobile_no"`
+	Address        string    `json:"address"`
+	City           string    `json:"city"`
+	PostalCode     int       `json:"postal_code"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
+	CompanyName    string    `json:"company_name"`
+	CompanyAddress string    `json:"company_address"`
 }
 
 func (req *RegisterSellerRequest) Validate() error {

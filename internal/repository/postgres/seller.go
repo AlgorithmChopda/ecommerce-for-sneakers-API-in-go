@@ -2,7 +2,9 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
 )
 
@@ -33,4 +35,38 @@ func (seller *sellerStore) CreateCompany(sellerCompanyInfo []any) (int64, error)
 	}
 
 	return companyId, nil
+}
+
+func (seller *sellerStore) GetAllSellers(roleId int) ([]dto.SellerResponseObject, error) {
+	rows, err := seller.DB.Query(GetAllSellers, roleId)
+	if err != nil {
+		return nil, errors.New("error while fetching seller details")
+	}
+
+	var sellerList []dto.SellerResponseObject
+	for rows.Next() {
+		var currentSeller dto.SellerResponseObject
+		err := rows.Scan(
+			&currentSeller.FirstName,
+			&currentSeller.LastName,
+			&currentSeller.Email,
+			&currentSeller.DateOfBirth,
+			&currentSeller.MobileNumber,
+			&currentSeller.Address,
+			&currentSeller.City,
+			&currentSeller.PostalCode,
+			&currentSeller.CreatedAt,
+			&currentSeller.UpdatedAt,
+			&currentSeller.CompanyName,
+			&currentSeller.CompanyAddress,
+		)
+		if err != nil {
+			return nil, errors.New("error while fetching seller details")
+		}
+
+		// Append the result to the slice
+		sellerList = append(sellerList, currentSeller)
+	}
+
+	return sellerList, nil
 }

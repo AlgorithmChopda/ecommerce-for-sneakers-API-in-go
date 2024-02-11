@@ -12,12 +12,14 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 
 	// UserRoutes
 	userRouter := router.PathPrefix("/user").Subrouter()
+	// seller buyer admin login
 	userRouter.HandleFunc("/login", LoginUserHandler(deps.UserService)).Methods(http.MethodPost)
 	userRouter.HandleFunc("/register", RegisterUserHandler(deps.UserService)).Methods(http.MethodPost)
 
-	// Admin
-	adminRouter := router.PathPrefix("/seller").Subrouter()
-	adminRouter.HandleFunc("", RegisterSellerHandler(deps.SellerService)).Methods(http.MethodPost)
+	// Seller
+	sellerRouter := router.PathPrefix("/seller").Subrouter()
+	sellerRouter.HandleFunc("", GetAllSellersHandler(deps.SellerService)).Methods(http.MethodGet)
+	sellerRouter.HandleFunc("", RegisterSellerHandler(deps.SellerService)).Methods(http.MethodPost)
 
 	// Product
 	productRouter := router.PathPrefix("/product").Subrouter()

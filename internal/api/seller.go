@@ -36,3 +36,16 @@ func RegisterSellerHandler(sellerSvc seller.Service) func(w http.ResponseWriter,
 		middleware.SuccessResponse(w, http.StatusAccepted, nil, "Seller Created")
 	}
 }
+
+func GetAllSellersHandler(sellerSvc seller.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sellerList, err := sellerSvc.GetSellerList()
+
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusAccepted, sellerList, "Sellers fetched successfully")
+	}
+}
