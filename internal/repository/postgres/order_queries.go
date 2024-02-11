@@ -38,3 +38,5 @@ const GetOrderAmount = `SELECT total_amount FROM orders where id = $1`
 const CheckOrderValid = `SELECT * FROM orders where buyer_id = $1 and id = $2 and is_cart = '1'`
 
 const GetPlacedOrderDetails = `SELECT total_amount, order_date, shipping_address FROM orders where id = $1 AND buyer_id = $2 AND is_cart = '0'`
+
+const GetUserOrders = `SELECT id, total_amount, order_date, shipping_address FROM orders where buyer_id = $1 AND is_cart = '0'`

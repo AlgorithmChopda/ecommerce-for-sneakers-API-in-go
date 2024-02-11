@@ -1,5 +1,7 @@
 package repository
 
+import "github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
+
 type OrderRepository interface {
 	Create(userId int) (int, error)
 	IsOrderPresent(userId int) (bool, error)
@@ -11,4 +13,5 @@ type OrderRepository interface {
 	GetAllOrderItems(orderId int) (any, error)
 	CheckOrderValid(userId, orderId int) (bool, error)
 	GetPlacedOrderDetails(userId, orderId int) (any, error)
+	GetUserPlacedOrders(userId int) ([]dto.UserOrderResponse, error)
 }

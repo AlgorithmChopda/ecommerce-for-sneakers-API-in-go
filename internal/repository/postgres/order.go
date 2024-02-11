@@ -328,5 +328,51 @@ func (order *orderStore) GetPlacedOrderDetails(userId, orderId int) (any, error)
 	}
 
 	return result, nil
+}
 
+func (order *orderStore) GetUserPlacedOrders(userId int) ([]dto.UserOrderResponse, error) {
+	var userOrders []dto.UserOrderResponse
+
+	rows, err := order.DB.Query(GetUserOrders, userId)
+	if err != nil {
+		return nil, errors.New("error while fetching user orders")
+	}
+
+	for rows.Next() {
+		// get order details
+		var currentOrder dto.UserOrderResponse
+		var currentOrderId int
+
+		rows.Scan(&currentOrderId, &currentOrder.TotalAmount, &currentOrder.OrderDate, &currentOrder.ShippingAddress)
+
+		// get order items
+		rows, err := order.DB.Query(GetOrderItems, currentOrderId)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("error while fetching order items")
+		}
+
+		for rows.Next() {
+			var currentProduct dto.OrderItemResponse
+			err := rows.Scan(
+				&currentProduct.Name,
+				&currentProduct.Description,
+				&currentProduct.Size,
+				&currentProduct.Color,
+				&currentProduct.Image,
+				&currentProduct.Price,
+				&currentProduct.Quantity,
+			)
+			if err != nil {
+				fmt.Println(err)
+				return nil, errors.New("error while fetching cart items")
+			}
+
+			currentOrder.OrderItems = append(currentOrder.OrderItems, currentProduct)
+		}
+
+		userOrders = append(userOrders, currentOrder)
+	}
+
+	return userOrders, nil
 }

@@ -35,6 +35,7 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	// TODO cart/{id}/count service and api remaining
 
 	orderPlacedRouted := router.PathPrefix("/order").Subrouter()
+	orderPlacedRouted.HandleFunc("", GetUserPlacedOrderHandler(deps.OrderService)).Methods(http.MethodGet)
 	orderPlacedRouted.HandleFunc("/{id}", GetPlacedOrderDetailsHandler(deps.OrderService)).Methods(http.MethodGet)
 
 	//PlaceOrderHandler

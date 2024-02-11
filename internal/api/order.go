@@ -204,3 +204,18 @@ func GetPlacedOrderDetailsHandler(orderSvc order.Service) func(w http.ResponseWr
 		middleware.SuccessResponse(w, http.StatusOK, orderDetails, "order fetched successfully")
 	}
 }
+
+func GetUserPlacedOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO take userId from token
+		userId := 2
+		userOrders, err := orderSvc.GetUserPlacedOrders(userId)
+
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusOK, userOrders, "user orders fetched successfully")
+	}
+}

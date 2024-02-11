@@ -17,6 +17,7 @@ type Service interface {
 	PlaceOrder(userId, orderId int, shipping_address string) error
 	GetAllOrderItems(userId, orderId int) (any, error)
 	GetPlaceOrderDetails(userId, orderId int) (any, error)
+	GetUserPlacedOrders(userId int) ([]dto.UserOrderResponse, error)
 }
 
 func NewService(orderRepoObject repository.OrderRepository) Service {
@@ -149,4 +150,13 @@ func (orderSvc *service) GetPlaceOrderDetails(userId, orderId int) (any, error) 
 	}
 
 	return orderDetais, nil
+}
+
+func (orderSvc *service) GetUserPlacedOrders(userId int) ([]dto.UserOrderResponse, error) {
+	userOrders, err := orderSvc.orderRepo.GetUserPlacedOrders(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return userOrders, nil
 }
