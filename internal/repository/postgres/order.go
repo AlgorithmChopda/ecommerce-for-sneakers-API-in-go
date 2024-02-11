@@ -175,31 +175,15 @@ func (order *orderStore) UpdateOrderItem(userId, cartId, productDetailId, requir
 }
 
 func (order *orderStore) PlaceOrder(userId, orderId int, shippingAddress string) error {
-	isPresent, err := order.IsOrderPresentWithOrderId(orderId)
-	if err != nil {
-		return err
-	}
-
-	if !isPresent {
-		return apperrors.NotFoundError{Message: "no cart found"}
-	}
-
-	orderItemCount, err := order.GetOrderItemCount(orderId)
-	if err != nil {
-		return err
-	}
-
-	if orderItemCount == 0 {
-		return apperrors.EmptyError{Message: "cart is empty"}
-	}
-
 	rows, err := order.DB.Exec(PlaceOrder, orderId, shippingAddress)
 	if err != nil {
+		fmt.Println(err)
 		return errors.New("error while placing order")
 	}
 
 	rowsAffected, err := rows.RowsAffected()
 	if err != nil || rowsAffected == 0 {
+		fmt.Println(err)
 		return errors.New("error while placing order")
 	}
 
@@ -375,4 +359,61 @@ func (order *orderStore) GetUserPlacedOrders(userId int) ([]dto.UserOrderRespons
 	}
 
 	return userOrders, nil
+}
+
+func (order *orderStore) GetUpdateItemsList(orderId int) ([]int, []int, error) {
+	// check if cart or not
+	isPresent, err := order.IsOrderPresentWithOrderId(orderId)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if !isPresent {
+		return nil, nil, apperrors.NotFoundError{Message: "no cart found"}
+	}
+
+	// check if cart empty or not
+	orderItemCount, err := order.GetOrderItemCount(orderId)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if orderItemCount == 0 {
+		return nil, nil, apperrors.EmptyError{Message: "cart is empty"}
+	}
+
+	// check if the items desired quantity available or not
+	rows, err := order.DB.Query(GetOrderItemProductIdAndQuantity, orderId)
+	if err != nil {
+		fmt.Println(err)
+		return nil, nil, errors.New("error while placing order")
+	}
+
+	var productDetailIdList, resultQuantity []int
+	for rows.Next() {
+		var curProductDetailId, curQuantity int
+		err = rows.Scan(&curProductDetailId, &curQuantity)
+
+		if err != nil {
+			fmt.Println(err)
+			return nil, nil, errors.New("error while placing o/rder")
+		}
+
+		var actualQuantity int
+		err := order.DB.QueryRow(GetProductQuantity, curProductDetailId).Scan(&actualQuantity)
+		if err != nil {
+			fmt.Println(err)
+			return nil, nil, errors.New("error while placing o/rder")
+		}
+
+		if actualQuantity < curQuantity {
+			fmt.Println("id:", curProductDetailId, actualQuantity, curQuantity)
+			return nil, nil, apperrors.InsufficientProductQuantity{}
+		}
+
+		productDetailIdList = append(productDetailIdList, curProductDetailId)
+		resultQuantity = append(resultQuantity, actualQuantity-curQuantity)
+	}
+
+	return productDetailIdList, resultQuantity, nil
 }

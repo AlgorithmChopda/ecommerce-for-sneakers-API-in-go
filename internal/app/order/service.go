@@ -7,7 +7,8 @@ import (
 )
 
 type service struct {
-	orderRepo repository.OrderRepository
+	orderRepo   repository.OrderRepository
+	productRepo repository.ProductRepository
 }
 
 type Service interface {
@@ -20,9 +21,10 @@ type Service interface {
 	GetUserPlacedOrders(userId int) ([]dto.UserOrderResponse, error)
 }
 
-func NewService(orderRepoObject repository.OrderRepository) Service {
+func NewService(orderRepoObject repository.OrderRepository, productRepoObject repository.ProductRepository) Service {
 	return &service{
-		orderRepo: orderRepoObject,
+		orderRepo:   orderRepoObject,
+		productRepo: productRepoObject,
 	}
 }
 
@@ -105,6 +107,18 @@ func (orderSvc *service) PlaceOrder(userId, orderId int, shipping_address string
 
 	if buyerId != userId {
 		return apperrors.UnauthorizedAccess{Message: "Unauthorized access"}
+	}
+
+	productDetailIdList, resultQuantity, err := orderSvc.orderRepo.GetUpdateItemsList(orderId)
+	if err != nil {
+		return err
+	}
+
+	for i := 0; i < len(productDetailIdList); i++ {
+		err := orderSvc.productRepo.UpdateProductDetail(productDetailIdList[i], resultQuantity[i])
+		if err != nil {
+			return err
+		}
 	}
 
 	err = orderSvc.orderRepo.PlaceOrder(userId, orderId, shipping_address)

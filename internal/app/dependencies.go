@@ -28,7 +28,7 @@ func NewService(db *sql.DB) Dependencies {
 	userSvc := user.NewService(userRepo, roleRepo)
 	sellerSvc := seller.NewService(sellerRepo, userRepo, roleRepo)
 	productSvc := product.NewService(productRepo, brandRepo)
-	orderSvc := order.NewService(orderRepo)
+	orderSvc := order.NewService(orderRepo, productRepo)
 
 	return Dependencies{
 		UserService:    userSvc,

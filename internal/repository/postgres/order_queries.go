@@ -40,3 +40,9 @@ const CheckOrderValid = `SELECT * FROM orders where buyer_id = $1 and id = $2 an
 const GetPlacedOrderDetails = `SELECT total_amount, order_date, shipping_address FROM orders where id = $1 AND buyer_id = $2 AND is_cart = '0'`
 
 const GetUserOrders = `SELECT id, total_amount, order_date, shipping_address FROM orders where buyer_id = $1 AND is_cart = '0'`
+
+const GetOrderItemProductIdAndQuantity = `SELECT product_detail_id, quantity 
+										  FROM orderitem JOIN orders ON orderitem.order_id = orders.id 
+										  WHERE orders.id = $1`
+
+const GetProductQuantity = `SELECT quantity FROM productdetail where productdetail.id = $1`

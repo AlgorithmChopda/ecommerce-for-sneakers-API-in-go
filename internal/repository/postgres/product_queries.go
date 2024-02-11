@@ -17,3 +17,7 @@ const GetProductById = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.qu
 const UpdateProduct = `UPDATE product
 					   SET name = $2,description = $3, updated_at = CURRENT_TIMESTAMP
 					   WHERE product.id = $1; `
+
+const UpdateProductDetail = `UPDATE productdetail
+							 SET quantity = $2
+							 WHERE id = $1`

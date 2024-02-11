@@ -121,3 +121,23 @@ func (product *productStore) UpdateProduct(productId int, name, description stri
 
 	return nil
 }
+
+func (product *productStore) UpdateProductDetail(productDetailId, quantity int) error {
+	res, err := product.DB.Exec(UpdateProductDetail, productDetailId, quantity)
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("error while updating product detail")
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("error while updating product detail")
+	}
+
+	if rowsAffected == 0 {
+		return apperrors.NotFoundError{Message: "no such product found"}
+	}
+
+	return nil
+}

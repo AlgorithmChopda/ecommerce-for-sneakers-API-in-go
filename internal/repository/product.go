@@ -7,4 +7,5 @@ type ProductRepository interface {
 	CreateProductDetail(productDetailInfo [][]any) error
 	GetProductById(productId int) (dto.ResponseProduct, error)
 	UpdateProduct(productId int, name, description string) error
+	UpdateProductDetail(productDetailId, quantity int) error
 }
