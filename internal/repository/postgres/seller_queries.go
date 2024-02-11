@@ -11,3 +11,5 @@ const GetAllSellers = `SELECT first_name, last_name, email, date_of_birth, mobil
 						JOIN companydetail as cd
 						ON users.company_id = cd.id
 						WHERE role_id = $1;`
+
+const DeleteSeller = `DELETE FROM users where id = $1`

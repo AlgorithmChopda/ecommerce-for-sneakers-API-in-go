@@ -17,6 +17,7 @@ type service struct {
 type Service interface {
 	RegisterSeller(sellerInfo dto.RegisterSellerRequest) error
 	GetSellerList() ([]dto.SellerResponseObject, error)
+	DeleteSeller(sellerId int) error
 }
 
 func NewService(sellerRepoObject repository.SellerRepository, userRepoObject repository.UserRepository, roleRepoObject repository.RoleRepository) Service {
@@ -92,4 +93,13 @@ func (sellerSvc *service) GetSellerList() ([]dto.SellerResponseObject, error) {
 	}
 
 	return sellerList, nil
+}
+
+func (sellerSvc *service) DeleteSeller(sellerId int) error {
+	err := sellerSvc.sellerRepo.DeleteSeller(sellerId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
