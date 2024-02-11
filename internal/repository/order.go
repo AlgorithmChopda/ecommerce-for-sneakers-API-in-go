@@ -10,4 +10,5 @@ type OrderRepository interface {
 	GetOrderItemCount(orderId int) (int, error)
 	GetAllOrderItems(orderId int) (any, error)
 	CheckOrderValid(userId, orderId int) (bool, error)
+	GetPlacedOrderDetails(userId, orderId int) (any, error)
 }

@@ -180,3 +180,27 @@ func GetAllOrderItemsHandler(orderSvc order.Service) func(w http.ResponseWriter,
 		middleware.SuccessResponse(w, http.StatusOK, orderItems, "cart items fetched successfully")
 	}
 }
+
+func GetPlacedOrderDetailsHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO take userId from token
+		userId := 2
+		orderId, err := helpers.GetPathParameter(r, "id")
+		if err != nil {
+			if err != nil {
+				middleware.ErrorResponse(w, http.StatusBadRequest, err)
+				return
+			}
+		}
+
+		orderDetails, err := orderSvc.GetPlaceOrderDetails(userId, orderId)
+
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusOK, orderDetails, "order fetched successfully")
+	}
+}

@@ -16,6 +16,7 @@ type Service interface {
 	UpdateProductInCart(userId, orderId, productDetailId int, product dto.ProductCartRequest) error
 	PlaceOrder(userId, orderId int, shipping_address string) error
 	GetAllOrderItems(userId, orderId int) (any, error)
+	GetPlaceOrderDetails(userId, orderId int) (any, error)
 }
 
 func NewService(orderRepoObject repository.OrderRepository) Service {
@@ -114,8 +115,6 @@ func (orderSvc *service) PlaceOrder(userId, orderId int, shipping_address string
 }
 
 func (orderSvc *service) GetAllOrderItems(userId, orderId int) (any, error) {
-	// if cart present or not ?
-	// if accessing cart is authorized or not
 	buyerId, err := orderSvc.orderRepo.GetBuyerId(orderId)
 	if err != nil {
 		return nil, err
@@ -141,4 +140,13 @@ func (orderSvc *service) GetAllOrderItems(userId, orderId int) (any, error) {
 	}
 
 	return orderItems, err
+}
+
+func (orderSvc *service) GetPlaceOrderDetails(userId, orderId int) (any, error) {
+	orderDetais, err := orderSvc.orderRepo.GetPlacedOrderDetails(userId, orderId)
+	if err != nil {
+		return nil, err
+	}
+
+	return orderDetais, nil
 }

@@ -32,6 +32,10 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	orderRouter.HandleFunc("/{id}/order", PlaceOrderHandler(deps.OrderService)).Methods(http.MethodPost)
 	orderRouter.HandleFunc("/{id}/{productDetailId}", AddOrderHandler(deps.OrderService)).Methods(http.MethodPost)
 	orderRouter.HandleFunc("/{id}/{productDetailId}", UpdateOrderItemHandler(deps.OrderService)).Methods(http.MethodPut)
+	// TODO cart/{id}/count service and api remaining
+
+	orderPlacedRouted := router.PathPrefix("/order").Subrouter()
+	orderPlacedRouted.HandleFunc("/{id}", GetPlacedOrderDetailsHandler(deps.OrderService)).Methods(http.MethodGet)
 
 	//PlaceOrderHandler
 	return router

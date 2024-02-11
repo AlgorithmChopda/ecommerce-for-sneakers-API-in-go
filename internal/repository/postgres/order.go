@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
@@ -272,4 +273,60 @@ func (order *orderStore) GetAllOrderItems(orderId int) (any, error) {
 	}
 
 	return result, nil
+}
+
+func (order *orderStore) GetPlacedOrderDetails(userId, orderId int) (any, error) {
+	var totalAmount float64
+	var orderDate time.Time
+	var shippingAddress string
+
+	row := order.DB.QueryRow(GetPlacedOrderDetails, orderId, userId)
+	err := row.Scan(&totalAmount, &orderDate, &shippingAddress)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, apperrors.NotFoundError{Message: "no such order found"}
+	}
+
+	rows, err := order.DB.Query(GetOrderItems, orderId)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("error while fetching order items")
+	}
+
+	var orderItems []dto.OrderItemResponse
+
+	for rows.Next() {
+		var currentProduct dto.OrderItemResponse
+		err := rows.Scan(
+			&currentProduct.Name,
+			&currentProduct.Description,
+			&currentProduct.Size,
+			&currentProduct.Color,
+			&currentProduct.Image,
+			&currentProduct.Price,
+			&currentProduct.Quantity,
+		)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("error while fetching cart items")
+		}
+
+		orderItems = append(orderItems, currentProduct)
+	}
+
+	result := struct {
+		TotalAmount     float64                 `json:"total_amount"`
+		OrderDate       time.Time               `json:"order_date"`
+		ShippingAddress string                  `json:"shipping_address"`
+		OrderItems      []dto.OrderItemResponse `json:"order_items"`
+	}{
+		TotalAmount:     totalAmount,
+		OrderDate:       orderDate,
+		ShippingAddress: shippingAddress,
+		OrderItems:      orderItems,
+	}
+
+	return result, nil
+
 }
