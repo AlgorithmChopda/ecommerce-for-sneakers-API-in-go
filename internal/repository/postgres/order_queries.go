@@ -13,3 +13,7 @@ const UpdateOrderAmount = `update orders set total_amount = total_amount + $2 wh
 const AddProductToOrder = `INSERT INTO orderitem (product_detail_id, order_id, price, quantity) VALUES ($1, $2, $3, $4)`
 
 const GetBuyerIdOfOrder = `SELECT buyer_id FROM orders where orders.id = $1`
+
+const UpdateOrderItem = `UPDATE orderitem SET quantity = $4, price = $3 WHERE order_id = $2 AND product_detail_id = $1`
+
+const GetOrderItemPriceAndQuantity = `SELECT quantity, price FROM orderitem where order_id = $1 AND product_detail_id = $2`

@@ -5,4 +5,5 @@ type OrderRepository interface {
 	IsOrderPresent(userId int) (bool, error)
 	GetBuyerId(orderId int) (int, error)
 	AddProductToOrder(userId, cartId, productDetailId, requiredQuantity int) error
+	UpdateOrderItem(userId, cartId, productDetailId, requiredQuantity int) error
 }
