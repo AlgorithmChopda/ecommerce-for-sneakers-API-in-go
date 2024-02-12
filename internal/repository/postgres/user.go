@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
 )
 
@@ -63,7 +64,7 @@ func (user *userStore) GetIdRoleAndPassword(email string) (int, int, string, err
 	err := row.Scan(&id, &role, &hashedPassword)
 
 	if err != nil {
-		return 0, 0, "", err
+		return 0, 0, "", apperrors.EmptyError{Message: "invalid username or password"}
 	}
 
 	return id, role, hashedPassword, nil

@@ -17,12 +17,14 @@ func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *ht
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			fmt.Println("invalid input request")
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
 		}
 
 		err = req.Validate()
 		if err != nil {
-			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
 			return
 		}
 
@@ -43,6 +45,7 @@ func LoginUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			fmt.Println("invalid input request")
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
 		}
 
@@ -54,7 +57,8 @@ func LoginUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.
 
 		token, err := userSvc.LoginUser(req.Email, req.Password)
 		if err != nil {
-			middleware.ErrorResponse(w, http.StatusInternalServerError, err)
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
 			return
 		}
 

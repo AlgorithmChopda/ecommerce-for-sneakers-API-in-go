@@ -1,12 +1,12 @@
 package dto
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
 	"time"
 
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
 )
 
@@ -34,6 +34,11 @@ func (req *RegisterUserRequest) Validate() error {
 		return err
 	}
 
+	_, err = regexp.Match(constants.EMAIL_REGEX, []byte(req.Email))
+	if err != nil {
+		return apperrors.EmptyError{Message: "invalid email format"}
+	}
+
 	return nil
 }
 
@@ -44,7 +49,7 @@ func (req *LoginUserRequest) Validate() error {
 	}
 	_, err = regexp.Match(constants.EMAIL_REGEX, []byte(req.Email))
 	if err != nil {
-		return errors.New("invalid email")
+		return apperrors.EmptyError{Message: "invalid email format"}
 	}
 
 	return nil
@@ -91,7 +96,7 @@ func ValidateStruct(req interface{}) error {
 	v := reflect.ValueOf(req)
 
 	if v.Kind() != reflect.Struct {
-		return errors.New("Input is not a struct")
+		return apperrors.EmptyError{Message: "Input is not a struct"}
 	}
 
 	for i := 0; i < v.NumField(); i++ {
@@ -100,14 +105,14 @@ func ValidateStruct(req interface{}) error {
 
 		if fieldType.Kind() == reflect.String {
 			if fieldValue.String() == "" {
-				return errors.New(fmt.Sprintf("Field '%s' is not present or has invalid value", v.Type().Field(i).Name))
+				return apperrors.EmptyError{Message: fmt.Sprintf("Field '%s' is not present or has invalid value", v.Type().Field(i).Name)}
 			}
 		}
 
 		if fieldType.Kind() == reflect.Int {
 			// Check if the int field is zero
 			if fieldValue.Int() == 0 {
-				return errors.New(fmt.Sprintf("Field '%s' is not present or has invalid value", v.Type().Field(i).Name))
+				return apperrors.EmptyError{Message: fmt.Sprintf("Field '%s' is not present or has invalid value", v.Type().Field(i).Name)}
 			}
 		}
 

@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app/seller"
@@ -17,7 +16,7 @@ func RegisterSellerHandler(sellerSvc seller.Service) func(w http.ResponseWriter,
 		var req dto.RegisterSellerRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			fmt.Println("invalid input request")
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
 		}
 
@@ -34,7 +33,7 @@ func RegisterSellerHandler(sellerSvc seller.Service) func(w http.ResponseWriter,
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, nil, "Seller Created")
+		middleware.SuccessResponse(w, http.StatusCreated, nil, "Seller Created")
 	}
 }
 
@@ -47,7 +46,7 @@ func GetAllSellersHandler(sellerSvc seller.Service) func(w http.ResponseWriter, 
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, sellerList, "Sellers fetched successfully")
+		middleware.SuccessResponse(w, http.StatusOK, sellerList, "Sellers fetched successfully")
 	}
 }
 
@@ -55,10 +54,8 @@ func DeleteSellerHandler(sellerSvc seller.Service) func(w http.ResponseWriter, r
 	return func(w http.ResponseWriter, r *http.Request) {
 		sellerId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
-			if err != nil {
-				middleware.ErrorResponse(w, http.StatusBadRequest, err)
-				return
-			}
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
 		}
 
 		err = sellerSvc.DeleteSeller(sellerId)
@@ -68,6 +65,6 @@ func DeleteSellerHandler(sellerSvc seller.Service) func(w http.ResponseWriter, r
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, nil, "seller deleted successfully")
+		middleware.SuccessResponse(w, http.StatusOK, nil, "seller deleted successfully")
 	}
 }

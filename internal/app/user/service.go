@@ -79,7 +79,7 @@ func (svc *service) LoginUser(email, passsword string) (string, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(passsword))
 	if err != nil {
-		return "", errors.New("Invalid login details")
+		return "", apperrors.EmptyError{Message: "invalid login details"}
 	}
 
 	token, err := helpers.CreateToken(id, role)
