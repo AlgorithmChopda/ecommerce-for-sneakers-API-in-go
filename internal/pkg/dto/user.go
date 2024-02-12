@@ -50,6 +50,12 @@ func (req *LoginUserRequest) Validate() error {
 	return nil
 }
 
+// Token
+type JwtToken struct {
+	Id   int
+	Role int
+}
+
 // Seller Type
 type RegisterSellerRequest struct {
 	RegisterUserRequest

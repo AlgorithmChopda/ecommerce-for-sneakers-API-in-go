@@ -1,9 +1,11 @@
 package helpers
 
 import (
+	"fmt"
 	"os"
 	"time"
 
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -24,4 +26,18 @@ func CreateToken(userId, role int) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func VerifyToken(tokenString string) (*jwt.Token, error) {
+	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtSecretKey), nil
+	})
+
+	if err != nil || !token.Valid {
+		fmt.Println(err)
+		return nil, apperrors.UnauthorizedAccess{Message: "invalid token"}
+	}
+
+	return token, nil
 }

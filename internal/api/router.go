@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/middleware"
 	"github.com/gorilla/mux"
 )
 
@@ -18,29 +20,29 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 
 	// Seller
 	sellerRouter := router.PathPrefix("/seller").Subrouter()
-	sellerRouter.HandleFunc("", GetAllSellersHandler(deps.SellerService)).Methods(http.MethodGet)
-	sellerRouter.HandleFunc("", RegisterSellerHandler(deps.SellerService)).Methods(http.MethodPost)
-	sellerRouter.HandleFunc("/{id}", DeleteSellerHandler(deps.SellerService)).Methods(http.MethodDelete)
+	sellerRouter.HandleFunc("", middleware.CheckAuth(GetAllSellersHandler(deps.SellerService), constants.ADMIN)).Methods(http.MethodGet)
+
+	sellerRouter.HandleFunc("", middleware.CheckAuth(RegisterSellerHandler(deps.SellerService), constants.ADMIN)).Methods(http.MethodPost)
+	sellerRouter.HandleFunc("/{id}", middleware.CheckAuth(DeleteSellerHandler(deps.SellerService), constants.ADMIN)).Methods(http.MethodDelete)
 
 	// Product
 	productRouter := router.PathPrefix("/product").Subrouter()
-	productRouter.HandleFunc("", CreateProductHandler(deps.ProductService)).Methods(http.MethodPost)
+	productRouter.HandleFunc("", middleware.CheckAuth(CreateProductHandler(deps.ProductService), constants.SELLER)).Methods(http.MethodPost)
 	productRouter.HandleFunc("/{id}", GetProductHandler(deps.ProductService)).Methods(http.MethodGet)
-	productRouter.HandleFunc("/{id}", UpdateProductHandler(deps.ProductService)).Methods(http.MethodPatch)
+	productRouter.HandleFunc("/{id}", middleware.CheckAuth(UpdateProductHandler(deps.ProductService), constants.SELLER)).Methods(http.MethodPatch)
 
 	// Order / Cart
 	orderRouter := router.PathPrefix("/cart").Subrouter()
-	orderRouter.HandleFunc("", CreateOrderHandler(deps.OrderService)).Methods(http.MethodPost)
-	orderRouter.HandleFunc("/{id}", GetAllOrderItemsHandler(deps.OrderService)).Methods(http.MethodGet)
-	orderRouter.HandleFunc("/{id}/order", PlaceOrderHandler(deps.OrderService)).Methods(http.MethodPost)
-	orderRouter.HandleFunc("/{id}/{productDetailId}", AddOrderHandler(deps.OrderService)).Methods(http.MethodPost)
-	orderRouter.HandleFunc("/{id}/{productDetailId}", UpdateOrderItemHandler(deps.OrderService)).Methods(http.MethodPut)
+	orderRouter.HandleFunc("", middleware.CheckAuth(CreateOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPost)
+	orderRouter.HandleFunc("/{id}", middleware.CheckAuth(GetAllOrderItemsHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodGet)
+	orderRouter.HandleFunc("/{id}/order", middleware.CheckAuth(PlaceOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPost)
+	orderRouter.HandleFunc("/{id}/{productDetailId}", middleware.CheckAuth(AddOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPost)
+	orderRouter.HandleFunc("/{id}/{productDetailId}", middleware.CheckAuth(UpdateOrderItemHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPut)
 	// TODO cart/{id}/count service and api remaining
 
 	orderPlacedRouted := router.PathPrefix("/order").Subrouter()
-	orderPlacedRouted.HandleFunc("", GetUserPlacedOrderHandler(deps.OrderService)).Methods(http.MethodGet)
-	orderPlacedRouted.HandleFunc("/{id}", GetPlacedOrderDetailsHandler(deps.OrderService)).Methods(http.MethodGet)
+	orderPlacedRouted.HandleFunc("", middleware.CheckAuth(GetUserPlacedOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodGet)
+	orderPlacedRouted.HandleFunc("/{id}", middleware.CheckAuth(GetPlacedOrderDetailsHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodGet)
 
-	//PlaceOrderHandler
 	return router
 }
