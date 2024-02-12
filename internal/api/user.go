@@ -8,6 +8,7 @@ import (
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app/user"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/helpers"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/middleware"
 )
 
@@ -78,5 +79,24 @@ func GetUserListHandler(userSvc user.Service) func(w http.ResponseWriter, r *htt
 		}
 
 		middleware.SuccessResponse(w, http.StatusAccepted, userList, "user list fetched successfully")
+	}
+}
+
+func GetUserProfileHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+			return
+		}
+
+		userProfile, err := userSvc.GetUserProfile(tokenData.Id)
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusAccepted, userProfile, "user profile fetched successfully")
 	}
 }

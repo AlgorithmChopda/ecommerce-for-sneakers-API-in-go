@@ -22,6 +22,7 @@ type Service interface {
 	RegisterUser(userInfo dto.RegisterUserRequest) error
 	LoginUser(email, passsword string) (string, error)
 	GetUserList(r *http.Request) ([]dto.UserResponseObject, error)
+	GetUserProfile(userId int) (dto.UserResponseObject, error)
 }
 
 func NewService(userRepoObject repository.UserRepository, roleRepoObject repository.RoleRepository) Service {
@@ -116,4 +117,13 @@ func (svc *service) GetUserList(r *http.Request) ([]dto.UserResponseObject, erro
 	}
 
 	return userList, nil
+}
+
+func (svc *service) GetUserProfile(userId int) (dto.UserResponseObject, error) {
+	userDetail, err := svc.userRepo.GetUserProfile(userId)
+	if err != nil {
+		return dto.UserResponseObject{}, err
+	}
+
+	return userDetail, nil
 }

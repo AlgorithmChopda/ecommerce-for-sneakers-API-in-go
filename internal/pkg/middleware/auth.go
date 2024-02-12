@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/helpers"
 	"github.com/golang-jwt/jwt/v5"
@@ -31,7 +32,7 @@ func CheckAuth(handlerFunc func(w http.ResponseWriter, r *http.Request), access 
 			id := int(claims["id"].(float64))
 			tokenRole := int(claims["role"].(float64))
 
-			if tokenRole != access {
+			if access != constants.ALL && tokenRole != access {
 				ErrorResponse(w, http.StatusUnauthorized, errors.New("unauthorized access"))
 				return
 			}

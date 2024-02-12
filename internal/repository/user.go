@@ -29,4 +29,5 @@ type UserRepository interface {
 	GetIdRoleAndPassword(email string) (int, int, string, error)
 	IsUserWithEmailPresent(email string) bool
 	GetUserList(roleId int) ([]dto.UserResponseObject, error)
+	GetUserProfile(userId int) (dto.UserResponseObject, error)
 }

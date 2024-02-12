@@ -18,6 +18,7 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	userRouter.HandleFunc("/login", LoginUserHandler(deps.UserService)).Methods(http.MethodPost)
 	userRouter.HandleFunc("/register", RegisterUserHandler(deps.UserService)).Methods(http.MethodPost)
 	userRouter.HandleFunc("", middleware.CheckAuth(GetUserListHandler(deps.UserService), constants.ADMIN)).Methods(http.MethodGet)
+	userRouter.HandleFunc("/profile", middleware.CheckAuth(GetUserProfileHandler(deps.UserService), constants.ALL)).Methods(http.MethodGet)
 
 	// Seller
 	sellerRouter := router.PathPrefix("/seller").Subrouter()

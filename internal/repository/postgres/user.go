@@ -119,3 +119,28 @@ func (user *userStore) GetUserList(roleId int) ([]dto.UserResponseObject, error)
 
 	return userList, nil
 }
+
+func (user *userStore) GetUserProfile(userId int) (dto.UserResponseObject, error) {
+	row := user.DB.QueryRow(GetUserWithId, userId)
+	var userDetail dto.UserResponseObject
+
+	err := row.Scan(
+		&userDetail.FirstName,
+		&userDetail.LastName,
+		&userDetail.Email,
+		&userDetail.DateOfBirth,
+		&userDetail.MobileNumber,
+		&userDetail.Address,
+		&userDetail.City,
+		&userDetail.PostalCode,
+		&userDetail.CreatedAt,
+		&userDetail.UpdatedAt,
+		&userDetail.Role,
+	)
+	if err != nil {
+		fmt.Println(err)
+		return dto.UserResponseObject{}, errors.New("error while fetching user details")
+	}
+
+	return userDetail, nil
+}
