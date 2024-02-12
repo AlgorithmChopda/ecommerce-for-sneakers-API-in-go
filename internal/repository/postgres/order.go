@@ -417,3 +417,21 @@ func (order *orderStore) GetUpdateItemsList(orderId int) ([]int, []int, error) {
 
 	return productDetailIdList, resultQuantity, nil
 }
+
+func (order *orderStore) DeleteItemFromOrder(orderId, productDetailId int) error {
+	rows, err := order.DB.Exec(DeleteItemFromOrder, orderId, productDetailId)
+	if err != nil {
+		return errors.New("errror while updating cart item")
+	}
+
+	rowsAffected, err := rows.RowsAffected()
+	if err != nil {
+		return errors.New("errror while updating cart item")
+	}
+
+	if rowsAffected == 0 {
+		return apperrors.NotFoundError{Message: "item not found in cart"}
+	}
+
+	return nil
+}

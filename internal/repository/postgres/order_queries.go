@@ -46,3 +46,5 @@ const GetOrderItemProductIdAndQuantity = `SELECT product_detail_id, quantity
 										  WHERE orders.id = $1`
 
 const GetProductQuantity = `SELECT quantity FROM productdetail where productdetail.id = $1`
+
+const DeleteItemFromOrder = `DELETE FROM orderitem WHERE order_id = $1 AND product_detail_id = $2`

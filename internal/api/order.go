@@ -109,8 +109,8 @@ func UpdateOrderItemHandler(orderSvc order.Service) func(w http.ResponseWriter, 
 		}
 
 		// TODO validate not working for nested object
-		err = req.Validate()
-		if err != nil {
+
+		if req.Quantity < 0 {
 			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
 		}

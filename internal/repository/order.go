@@ -15,4 +15,5 @@ type OrderRepository interface {
 	GetPlacedOrderDetails(userId, orderId int) (any, error)
 	GetUserPlacedOrders(userId int) ([]dto.UserOrderResponse, error)
 	GetUpdateItemsList(orderId int) ([]int, []int, error)
+	DeleteItemFromOrder(orderId, productDetailId int) error
 }
