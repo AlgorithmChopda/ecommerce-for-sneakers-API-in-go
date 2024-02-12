@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"time"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -40,4 +42,17 @@ func VerifyToken(tokenString string) (*jwt.Token, error) {
 	}
 
 	return token, nil
+}
+
+func GetTokenData(ctx context.Context) (dto.JwtToken, error) {
+	if ctx == nil {
+		return dto.JwtToken{}, apperrors.UnauthorizedAccess{Message: "token data not found"}
+	}
+
+	tokenData, ok := ctx.Value("token").(dto.JwtToken)
+	if !ok {
+		return dto.JwtToken{}, apperrors.UnauthorizedAccess{Message: "token data not found"}
+	}
+
+	return tokenData, nil
 }

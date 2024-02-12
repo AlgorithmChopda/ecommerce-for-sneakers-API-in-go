@@ -12,17 +12,17 @@ type Service struct {
 	mock.Mock
 }
 
-// CreateProduct provides a mock function with given fields: _a0
-func (_m *Service) CreateProduct(_a0 dto.CreateProductRequest) error {
-	ret := _m.Called(_a0)
+// CreateProduct provides a mock function with given fields: _a0, sellerId
+func (_m *Service) CreateProduct(_a0 dto.CreateProductRequest, sellerId int) error {
+	ret := _m.Called(_a0, sellerId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateProduct")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(dto.CreateProductRequest) error); ok {
-		r0 = rf(_a0)
+	if rf, ok := ret.Get(0).(func(dto.CreateProductRequest, int) error); ok {
+		r0 = rf(_a0, sellerId)
 	} else {
 		r0 = ret.Error(0)
 	}

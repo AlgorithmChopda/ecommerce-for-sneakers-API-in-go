@@ -13,7 +13,7 @@ type service struct {
 }
 
 type Service interface {
-	CreateProduct(product dto.CreateProductRequest) error
+	CreateProduct(product dto.CreateProductRequest, sellerId int) error
 	GetProductByID(productId int) (dto.ResponseProduct, error)
 	UpdateProduct(req dto.UpdateProductRequest, productId int) error
 	GetProductsByFilters(filters map[string]string) ([]dto.ResponseProduct, error)
@@ -26,10 +26,8 @@ func NewService(productRepoObject repository.ProductRepository, brandRepoObject 
 	}
 }
 
-func (productSvc *service) CreateProduct(product dto.CreateProductRequest) error {
+func (productSvc *service) CreateProduct(product dto.CreateProductRequest, sellerId int) error {
 	// TODO compute seller id implement transaction
-	sellerId := 1
-
 	brandId, err := productSvc.brandRepo.GetBrandId(product.Brand)
 	if err != nil {
 		return errors.New("No such brand found")
@@ -91,7 +89,6 @@ func (productSvc *service) UpdateProduct(req dto.UpdateProductRequest, productId
 }
 
 func (productSvc *service) GetProductsByFilters(filters map[string]string) ([]dto.ResponseProduct, error) {
-
 	productList, err := productSvc.productRepo.GetProductListWithFilters(filters)
 	if err != nil {
 		return nil, err

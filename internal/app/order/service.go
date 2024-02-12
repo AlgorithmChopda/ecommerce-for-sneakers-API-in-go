@@ -1,6 +1,8 @@
 package order
 
 import (
+	"fmt"
+
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
@@ -111,12 +113,14 @@ func (orderSvc *service) PlaceOrder(userId, orderId int, shipping_address string
 
 	productDetailIdList, resultQuantity, err := orderSvc.orderRepo.GetUpdateItemsList(orderId)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
 	for i := 0; i < len(productDetailIdList); i++ {
 		err := orderSvc.productRepo.UpdateProductDetail(productDetailIdList[i], resultQuantity[i])
 		if err != nil {
+			fmt.Println(err)
 			return err
 		}
 	}

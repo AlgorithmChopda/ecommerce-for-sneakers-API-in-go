@@ -13,9 +13,12 @@ import (
 
 func CreateOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO take userId from token
-		userId := 2
-		cartId, err := orderSvc.CreateOrder(userId)
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+
+		cartId, err := orderSvc.CreateOrder(tokenData.Id)
 		if err != nil {
 			status, err := apperrors.MapError(err)
 			middleware.ErrorResponse(w, status, err)
@@ -28,8 +31,11 @@ func CreateOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *h
 
 func AddOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO take userId from token
-		userId := 2
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+
 		orderId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
 			if err != nil {
@@ -60,7 +66,7 @@ func AddOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http
 			return
 		}
 
-		err = orderSvc.AddProductToOrder(userId, orderId, productDetailId, req)
+		err = orderSvc.AddProductToOrder(tokenData.Id, orderId, productDetailId, req)
 
 		if err != nil {
 			status, err := apperrors.MapError(err)
@@ -74,8 +80,11 @@ func AddOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http
 
 func UpdateOrderItemHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO take userId from token
-		userId := 2
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+
 		orderId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
 			if err != nil {
@@ -106,7 +115,7 @@ func UpdateOrderItemHandler(orderSvc order.Service) func(w http.ResponseWriter, 
 			return
 		}
 
-		err = orderSvc.UpdateProductInCart(userId, orderId, productDetailId, req)
+		err = orderSvc.UpdateProductInCart(tokenData.Id, orderId, productDetailId, req)
 
 		if err != nil {
 			status, err := apperrors.MapError(err)
@@ -120,8 +129,11 @@ func UpdateOrderItemHandler(orderSvc order.Service) func(w http.ResponseWriter, 
 
 func PlaceOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO take userId from token
-		userId := 2
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+
 		orderId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
 			if err != nil {
@@ -145,7 +157,7 @@ func PlaceOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *ht
 			return
 		}
 
-		err = orderSvc.PlaceOrder(userId, orderId, req.ShippingAddress)
+		err = orderSvc.PlaceOrder(tokenData.Id, orderId, req.ShippingAddress)
 
 		if err != nil {
 			status, err := apperrors.MapError(err)
@@ -159,8 +171,10 @@ func PlaceOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *ht
 
 func GetAllOrderItemsHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO take userId from token
-		userId := 2
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
 		orderId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
 			if err != nil {
@@ -169,7 +183,7 @@ func GetAllOrderItemsHandler(orderSvc order.Service) func(w http.ResponseWriter,
 			}
 		}
 
-		orderItems, err := orderSvc.GetAllOrderItems(userId, orderId)
+		orderItems, err := orderSvc.GetAllOrderItems(tokenData.Id, orderId)
 
 		if err != nil {
 			status, err := apperrors.MapError(err)
@@ -183,8 +197,10 @@ func GetAllOrderItemsHandler(orderSvc order.Service) func(w http.ResponseWriter,
 
 func GetPlacedOrderDetailsHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO take userId from token
-		userId := 2
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
 		orderId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
 			if err != nil {
@@ -193,7 +209,7 @@ func GetPlacedOrderDetailsHandler(orderSvc order.Service) func(w http.ResponseWr
 			}
 		}
 
-		orderDetails, err := orderSvc.GetPlaceOrderDetails(userId, orderId)
+		orderDetails, err := orderSvc.GetPlaceOrderDetails(tokenData.Id, orderId)
 
 		if err != nil {
 			status, err := apperrors.MapError(err)
@@ -207,9 +223,11 @@ func GetPlacedOrderDetailsHandler(orderSvc order.Service) func(w http.ResponseWr
 
 func GetUserPlacedOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO take userId from token
-		userId := 2
-		userOrders, err := orderSvc.GetUserPlacedOrders(userId)
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+		userOrders, err := orderSvc.GetUserPlacedOrders(tokenData.Id)
 
 		if err != nil {
 			middleware.ErrorResponse(w, http.StatusInternalServerError, err)

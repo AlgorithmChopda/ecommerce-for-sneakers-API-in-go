@@ -27,13 +27,18 @@ func CreateProductHandler(productSvc product.Service) func(w http.ResponseWriter
 			return
 		}
 
-		err = productSvc.CreateProduct(req)
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+
+		err = productSvc.CreateProduct(req, tokenData.Id)
 		if err != nil {
 			middleware.ErrorResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, nil, "Product added")
+		middleware.SuccessResponse(w, http.StatusCreated, nil, "Product added")
 	}
 }
 
