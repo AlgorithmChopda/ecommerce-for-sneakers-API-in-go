@@ -72,10 +72,19 @@ func (order *orderStore) CheckOrderValid(userId, orderId int) (bool, error) {
 }
 
 func (order *orderStore) AddProductToOrder(userId, cartId, productDetailId, requiredQuantity int) error {
+	// check if product already present in cart or not
+	var prevQuantity int
+	var prevPrice float64
+
+	err := order.DB.QueryRow(GetOrderItemPriceAndQuantity, cartId, productDetailId).Scan(&prevQuantity, &prevPrice)
+	if err == nil {
+		return apperrors.EmptyError{Message: "product already present in cart"}
+	}
+
 	// get product price and quantity
 	var actualQuantity int
 	var price float64
-	err := order.DB.QueryRow(GetProductQuantityAndPrice, productDetailId).Scan(&actualQuantity, &price)
+	err = order.DB.QueryRow(GetProductQuantityAndPrice, productDetailId).Scan(&actualQuantity, &price)
 
 	if err != nil {
 		return apperrors.NotFoundError{Message: "no such product found"}
@@ -100,8 +109,6 @@ func (order *orderStore) AddProductToOrder(userId, cartId, productDetailId, requ
 	if rowsAffected == 0 {
 		return apperrors.NotFoundError{Message: "no cart found"}
 	}
-
-	// TODO handle if product already present
 
 	// add product to cart
 	rows, err = order.DB.Exec(AddProductToOrder, productDetailId, cartId, price, requiredQuantity)
