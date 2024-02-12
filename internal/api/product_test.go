@@ -2,7 +2,9 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,23 +23,40 @@ func TestCreateProductHandler(t *testing.T) {
 	tests := []struct {
 		name               string
 		input              string
+		isToken            bool
+		token              interface{}
 		setup              func(mockSvc *mocks.Service)
 		expectedStatusCode int
 	}{
 		{
-			name:               "invalid json",
-			input:              `[]`,
+			name:    "invalid json",
+			input:   `[]`,
+			isToken: true,
+			token: dto.JwtToken{
+				Id:   1,
+				Role: 2,
+			},
 			setup:              func(mockSvc *mocks.Service) {},
 			expectedStatusCode: http.StatusBadRequest,
 		},
 		{
-			name:               "invalid request format",
-			input:              `{}`,
+			name:    "invalid request format",
+			input:   `{}`,
+			isToken: true,
+			token: dto.JwtToken{
+				Id:   1,
+				Role: 2,
+			},
 			setup:              func(mockSvc *mocks.Service) {},
 			expectedStatusCode: http.StatusBadRequest,
 		},
 		{
-			name: "Error adding Product",
+			name:    "Error adding Product",
+			isToken: true,
+			token: dto.JwtToken{
+				Id:   1,
+				Role: 2,
+			},
 			input: `
 			{
 				"name": "jordan",
@@ -62,14 +81,19 @@ func TestCreateProductHandler(t *testing.T) {
 				  }
 				 ]
 			  }
-            `,
+		    `,
 			setup: func(mockSvc *mocks.Service) {
 				mockSvc.On("CreateProduct", mock.Anything, mock.Anything).Return(errors.New("error")).Once()
 			},
 			expectedStatusCode: http.StatusInternalServerError,
 		},
 		{
-			name: "Success adding Product",
+			name:    "Success adding Product",
+			isToken: true,
+			token: dto.JwtToken{
+				Id:   1,
+				Role: 2,
+			},
 			input: `
 			{
 				"name": "jordan",
@@ -94,9 +118,9 @@ func TestCreateProductHandler(t *testing.T) {
 				  }
 				 ]
 			  }
-            `,
+		    `,
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("CreateProduct", mock.Anything).Return(nil).Once()
+				mockSvc.On("CreateProduct", mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			expectedStatusCode: http.StatusCreated,
 		},
@@ -111,6 +135,11 @@ func TestCreateProductHandler(t *testing.T) {
 				t.Fatal(err)
 				return
 			}
+
+			if test.isToken {
+				req = req.WithContext(context.WithValue(req.Context(), "token", test.token))
+			}
+
 			rr := httptest.NewRecorder()
 			handler := http.HandlerFunc(addWebsitesHandler)
 			handler.ServeHTTP(rr, req)
@@ -190,6 +219,8 @@ func TestUpdateProductHandler(t *testing.T) {
 		id                 string
 		input              string
 		setup              func(mockSvc *mocks.Service)
+		isToken            bool
+		token              dto.JwtToken
 		expectedStatusCode int
 	}{
 		{
@@ -198,6 +229,7 @@ func TestUpdateProductHandler(t *testing.T) {
 			input:              "",
 			setup:              func(mockSvc *mocks.Service) {},
 			expectedStatusCode: http.StatusBadRequest,
+			isToken:            false,
 		},
 		{
 			name:               "invalid parameter",
@@ -205,6 +237,7 @@ func TestUpdateProductHandler(t *testing.T) {
 			input:              "[]",
 			setup:              func(mockSvc *mocks.Service) {},
 			expectedStatusCode: http.StatusBadRequest,
+			isToken:            false,
 		},
 		{
 			name:               "invalid parameter",
@@ -212,10 +245,16 @@ func TestUpdateProductHandler(t *testing.T) {
 			input:              "{}",
 			setup:              func(mockSvc *mocks.Service) {},
 			expectedStatusCode: http.StatusBadRequest,
+			isToken:            false,
 		},
 		{
-			name: "success",
-			id:   "4",
+			name:    "success",
+			id:      "4",
+			isToken: true,
+			token: dto.JwtToken{
+				Id:   1,
+				Role: 2,
+			},
 			input: `
 			{
 				"name": "jordan",
@@ -246,8 +285,13 @@ func TestUpdateProductHandler(t *testing.T) {
 			expectedStatusCode: http.StatusOK,
 		},
 		{
-			name: "success",
-			id:   "4",
+			name:    "success",
+			id:      "4",
+			isToken: true,
+			token: dto.JwtToken{
+				Id:   1,
+				Role: 2,
+			},
 			input: `
 			{
 				"name": "jordan",
@@ -289,9 +333,66 @@ func TestUpdateProductHandler(t *testing.T) {
 				return
 			}
 
+			if test.isToken {
+				req = req.WithContext(context.WithValue(req.Context(), "token", test.token))
+			}
+
 			req = mux.SetURLVars(req, map[string]string{
 				"id": test.id,
 			})
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(addWebsitesHandler)
+			handler.ServeHTTP(rr, req)
+
+			if rr.Result().StatusCode != test.expectedStatusCode {
+				t.Errorf("Expected %d but got %d", test.expectedStatusCode, rr.Result().StatusCode)
+			}
+		})
+	}
+}
+
+func TestGetProductWithFilterHandler(t *testing.T) {
+	websitesSvc := mocks.NewService(t)
+	addWebsitesHandler := GetProductWithFilterHandler(websitesSvc)
+
+	tests := []struct {
+		name               string
+		id                 string
+		input              string
+		setup              func(mockSvc *mocks.Service)
+		expectedStatusCode int
+	}{
+		{
+			name:  "success",
+			id:    "",
+			input: "?color=red&brand=puma&size=7",
+			setup: func(mockSvc *mocks.Service) {
+				mockSvc.On("GetProductsByFilters", mock.Anything).Return([]dto.ResponseProduct{}, nil).Once()
+			},
+			expectedStatusCode: http.StatusOK,
+		},
+		{
+			name:  "error",
+			id:    "",
+			input: "?color=red&brand=puma&size=7",
+			setup: func(mockSvc *mocks.Service) {
+				mockSvc.On("GetProductsByFilters", mock.Anything).Return([]dto.ResponseProduct{}, errors.New("error")).Once()
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.setup(websitesSvc)
+			url := "/product" + test.input
+			fmt.Println(url)
+			req, err := http.NewRequest("GET", "/product?color=red&brand=puma&size=7", bytes.NewBuffer([]byte(test.input)))
+			if err != nil {
+				t.Fatal(err)
+				return
+			}
 
 			rr := httptest.NewRecorder()
 			handler := http.HandlerFunc(addWebsitesHandler)
