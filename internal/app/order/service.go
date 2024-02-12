@@ -93,11 +93,7 @@ func (orderSvc *service) UpdateProductInCart(userId, orderId, productDetailId in
 		return apperrors.NotFoundError{Message: "no cart found"}
 	}
 
-	if product.Quantity == 0 {
-		err = orderSvc.orderRepo.DeleteItemFromOrder(orderId, productDetailId)
-	} else {
-		err = orderSvc.orderRepo.UpdateOrderItem(userId, orderId, productDetailId, product.Quantity)
-	}
+	err = orderSvc.orderRepo.UpdateOrderItem(userId, orderId, productDetailId, product.Quantity)
 
 	if err != nil {
 		return err

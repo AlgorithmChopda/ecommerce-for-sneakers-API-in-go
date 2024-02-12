@@ -160,7 +160,12 @@ func (order *orderStore) UpdateOrderItem(userId, cartId, productDetailId, requir
 	}
 
 	// update product in cart
-	rows, err = order.DB.Exec(UpdateOrderItem, productDetailId, cartId, price, requiredQuantity)
+	if requiredQuantity == 0 {
+		rows, err = order.DB.Exec(DeleteItemFromOrder, cartId, productDetailId)
+	} else {
+		rows, err = order.DB.Exec(UpdateOrderItem, productDetailId, cartId, price, requiredQuantity)
+	}
+
 	if err != nil {
 		return errors.New("error while Updating product to cart")
 	}
