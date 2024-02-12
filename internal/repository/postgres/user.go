@@ -2,9 +2,12 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
 )
 
@@ -68,4 +71,51 @@ func (user *userStore) GetIdRoleAndPassword(email string) (int, int, string, err
 	}
 
 	return id, role, hashedPassword, nil
+}
+
+func (user *userStore) GetUserList(roleId int) ([]dto.UserResponseObject, error) {
+	// roleId = -1 indicates both type of users
+	var rows *sql.Rows
+	if roleId == -1 {
+		currRows, err := user.DB.Query(GetBuyerAndSellerList, constants.BUYER, constants.SELLER)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("error while fetching user records")
+		}
+		rows = currRows
+	} else {
+		currRows, err := user.DB.Query(GetBuyerOrSellerList, roleId)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("error while fetching user records")
+		}
+		rows = currRows
+	}
+
+	var userList []dto.UserResponseObject
+	for rows.Next() {
+		var currentUser dto.UserResponseObject
+		err := rows.Scan(
+			&currentUser.FirstName,
+			&currentUser.LastName,
+			&currentUser.Email,
+			&currentUser.DateOfBirth,
+			&currentUser.MobileNumber,
+			&currentUser.Address,
+			&currentUser.City,
+			&currentUser.PostalCode,
+			&currentUser.CreatedAt,
+			&currentUser.UpdatedAt,
+			&currentUser.Role,
+		)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("error while fetching user records")
+		}
+
+		// Append the result to the slice
+		userList = append(userList, currentUser)
+	}
+
+	return userList, nil
 }

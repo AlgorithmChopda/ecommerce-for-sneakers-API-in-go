@@ -23,7 +23,7 @@ func CheckAuth(handlerFunc func(w http.ResponseWriter, r *http.Request), access 
 		token, err := helpers.VerifyToken(tokenString)
 		if err != nil {
 			fmt.Println(err)
-			ErrorResponse(w, http.StatusUnauthorized, errors.New("invalid token"))
+			ErrorResponse(w, http.StatusUnauthorized, errors.New("unauthorized access"))
 			return
 		}
 
@@ -32,7 +32,7 @@ func CheckAuth(handlerFunc func(w http.ResponseWriter, r *http.Request), access 
 			tokenRole := int(claims["role"].(float64))
 
 			if tokenRole != access {
-				ErrorResponse(w, http.StatusUnauthorized, errors.New("invalid token"))
+				ErrorResponse(w, http.StatusUnauthorized, errors.New("unauthorized access"))
 				return
 			}
 

@@ -3,8 +3,10 @@ package user
 import (
 	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/helpers"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/repository"
@@ -19,6 +21,7 @@ type service struct {
 type Service interface {
 	RegisterUser(userInfo dto.RegisterUserRequest) error
 	LoginUser(email, passsword string) (string, error)
+	GetUserList(r *http.Request) ([]dto.UserResponseObject, error)
 }
 
 func NewService(userRepoObject repository.UserRepository, roleRepoObject repository.RoleRepository) Service {
@@ -70,7 +73,6 @@ func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest) error {
 	return nil
 }
 
-// TODO: handle token, register use all case - if email already exists and error handling
 func (svc *service) LoginUser(email, passsword string) (string, error) {
 	id, role, hashedPassword, err := svc.userRepo.GetIdRoleAndPassword(email)
 	if err != nil {
@@ -89,4 +91,29 @@ func (svc *service) LoginUser(email, passsword string) (string, error) {
 	}
 
 	return token, nil
+}
+
+func (svc *service) GetUserList(r *http.Request) ([]dto.UserResponseObject, error) {
+	role := r.URL.Query().Get("type")
+	roleType := -1
+
+	switch role {
+	case "seller":
+		roleType = constants.SELLER
+	case "buyer":
+		roleType = constants.BUYER
+	default:
+		if role == "" {
+			roleType = -1
+		} else {
+			return nil, apperrors.EmptyError{Message: "type not found"}
+		}
+	}
+
+	userList, err := svc.userRepo.GetUserList(roleType)
+	if err != nil {
+		return nil, err
+	}
+
+	return userList, nil
 }

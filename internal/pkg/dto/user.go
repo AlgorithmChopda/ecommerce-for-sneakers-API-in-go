@@ -125,3 +125,17 @@ func ValidateStruct(req interface{}) error {
 
 	return nil
 }
+
+type UserResponseObject struct {
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
+	Email        string    `json:"email"`
+	DateOfBirth  time.Time `json:"date_of_birth"`
+	MobileNumber int       `json:"mobile_no"`
+	Address      string    `json:"address"`
+	City         string    `json:"city"`
+	Role         string    `json:"role"`
+	PostalCode   int       `json:"postal_code"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}

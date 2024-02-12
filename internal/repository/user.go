@@ -2,6 +2,8 @@ package repository
 
 import (
 	"time"
+
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 )
 
 type User struct {
@@ -26,4 +28,5 @@ type UserRepository interface {
 	CheckUserWithEmailAndPassword(email, password string) error
 	GetIdRoleAndPassword(email string) (int, int, string, error)
 	IsUserWithEmailPresent(email string) bool
+	GetUserList(roleId int) ([]dto.UserResponseObject, error)
 }

@@ -67,3 +67,16 @@ func LoginUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.
 		}{Token: token}, "login successfull")
 	}
 }
+
+func GetUserListHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userList, err := userSvc.GetUserList(r)
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusAccepted, userList, "user list fetched successfully")
+	}
+}
