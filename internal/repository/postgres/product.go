@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
@@ -144,32 +143,7 @@ func (product *productStore) UpdateProductDetail(productDetailId, quantity int) 
 }
 
 func (product *productStore) GetProductListWithFilters(filters map[string]string) ([]dto.ResponseProduct, error) {
-	var rawQuery string = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity, b.name AS brand_name 
-						   from product as p 
-						   JOIN productdetail as pd ON p.id = pd.product_id 
-						   JOIN brand b ON p.brand_id = b.id `
-
-	isFirstKey := true
-	for key, value := range filters {
-		if isFirstKey {
-			rawQuery += "where "
-			isFirstKey = false
-		}
-		if key == "name" {
-			rawQuery += fmt.Sprintf("b.%s = '%s' AND ", key, value)
-		}
-
-		if key == "color" {
-			rawQuery += fmt.Sprintf("pd.%s = '%s' AND ", key, value)
-		}
-
-		if key == "size" {
-			rawQuery += fmt.Sprintf("pd.%s = %s AND ", key, value)
-		}
-	}
-	rawQuery = strings.TrimSuffix(rawQuery, "AND ")
-	rawQuery += " ORDER BY id"
-
+	rawQuery := getQueryForFilters(filters)
 	rows, err := product.DB.Query(rawQuery)
 	if err != nil {
 		fmt.Println(err)

@@ -1,5 +1,10 @@
 package repository
 
+import (
+	"fmt"
+	"strings"
+)
+
 const CreateProductQuery = `INSERT INTO product (name, description, seller_id, brand_id) 
 							VALUES ($1, $2, $3, $4) Returning id`
 
@@ -21,3 +26,33 @@ const UpdateProduct = `UPDATE product
 const UpdateProductDetail = `UPDATE productdetail
 							 SET quantity = $2
 							 WHERE id = $1`
+
+func getQueryForFilters(filters map[string]string) string {
+	var rawQuery string = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity, b.name AS brand_name 
+						   from product as p 
+						   JOIN productdetail as pd ON p.id = pd.product_id 
+						   JOIN brand b ON p.brand_id = b.id `
+
+	isFirstKey := true
+	for key, value := range filters {
+		if isFirstKey {
+			rawQuery += "where "
+			isFirstKey = false
+		}
+		if key == "name" {
+			rawQuery += fmt.Sprintf("b.%s = '%s' AND ", key, value)
+		}
+
+		if key == "color" {
+			rawQuery += fmt.Sprintf("pd.%s = '%s' AND ", key, value)
+		}
+
+		if key == "size" {
+			rawQuery += fmt.Sprintf("pd.%s = %s AND ", key, value)
+		}
+	}
+	rawQuery = strings.TrimSuffix(rawQuery, "AND ")
+	rawQuery += " ORDER BY id"
+
+	return rawQuery
+}
