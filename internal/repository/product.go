@@ -8,4 +8,5 @@ type ProductRepository interface {
 	GetProductById(productId int) (dto.ResponseProduct, error)
 	UpdateProduct(productId int, name, description string) error
 	UpdateProductDetail(productDetailId, quantity int) error
+	GetProductListWithFilters(filters map[string]string) ([]dto.ResponseProduct, error)
 }

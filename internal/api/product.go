@@ -88,3 +88,33 @@ func UpdateProductHandler(productSvc product.Service) func(w http.ResponseWriter
 		middleware.SuccessResponse(w, http.StatusOK, nil, "product updated")
 	}
 }
+
+func GetProductWithFilterHandler(productSvc product.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// order, color, size, brand
+		var filters = map[string]string{}
+		color := r.URL.Query().Get("color")
+		if color != "" {
+			filters["color"] = color
+		}
+
+		size := r.URL.Query().Get("size")
+		if size != "" {
+			filters["size"] = size
+		}
+
+		brand := r.URL.Query().Get("brand")
+		if brand != "" {
+			filters["name"] = brand
+		}
+
+		product, err := productSvc.GetProductsByFilters(filters)
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusOK, product, "Product Fetched")
+	}
+}

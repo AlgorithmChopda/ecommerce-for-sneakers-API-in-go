@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
@@ -140,4 +141,89 @@ func (product *productStore) UpdateProductDetail(productDetailId, quantity int) 
 	}
 
 	return nil
+}
+
+func (product *productStore) GetProductListWithFilters(filters map[string]string) ([]dto.ResponseProduct, error) {
+	var rawQuery string = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity, b.name AS brand_name 
+						   from product as p 
+						   JOIN productdetail as pd ON p.id = pd.product_id 
+						   JOIN brand b ON p.brand_id = b.id `
+
+	isFirstKey := true
+	for key, value := range filters {
+		if isFirstKey {
+			rawQuery += "where "
+			isFirstKey = false
+		}
+		if key == "name" {
+			rawQuery += fmt.Sprintf("b.%s = '%s' AND ", key, value)
+		}
+
+		if key == "color" {
+			rawQuery += fmt.Sprintf("pd.%s = '%s' AND ", key, value)
+		}
+
+		if key == "size" {
+			rawQuery += fmt.Sprintf("pd.%s = %s AND ", key, value)
+		}
+	}
+	rawQuery = strings.TrimSuffix(rawQuery, "AND ")
+	rawQuery += " ORDER BY id"
+
+	rows, err := product.DB.Query(rawQuery)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("error while fetching products")
+	}
+
+	var productObject []dto.ResponseProduct
+	isNewProduct := true
+	index, prevProductId := -1, -1
+
+	for rows.Next() {
+		var readProduct dto.ReadProduct
+		err = rows.Scan(
+			&readProduct.ProductID, &readProduct.Name, &readProduct.Description, &readProduct.CreatedAt, &readProduct.UpdatedAt,
+			&readProduct.SellerID, &readProduct.BrandID, &readProduct.Size, &readProduct.Color, &readProduct.Image,
+			&readProduct.Price, &readProduct.Quantity, &readProduct.BrandName,
+		)
+
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("error while fetching product")
+		}
+
+		if prevProductId != readProduct.ProductID {
+			prevProductId = readProduct.ProductID
+			isNewProduct = true
+		}
+
+		if isNewProduct {
+			productObject = append(productObject, dto.ResponseProduct{})
+			index++
+
+			productObject[index].Id = readProduct.ProductID
+			productObject[index].BrandID = readProduct.BrandID
+			productObject[index].SellerID = readProduct.SellerID
+			productObject[index].Name = readProduct.Name
+			productObject[index].BrandName = readProduct.BrandName
+			productObject[index].Description = readProduct.Description
+			productObject[index].CreatedAt = readProduct.CreatedAt
+			productObject[index].UpdatedAt = readProduct.UpdatedAt
+
+			isNewProduct = false
+		}
+
+		newVariety := dto.ResponseVarities{
+			Color:    readProduct.Color,
+			Image:    readProduct.Image,
+			Size:     readProduct.Size,
+			Price:    readProduct.Price,
+			Quantity: readProduct.Quantity,
+		}
+
+		productObject[index].Varieties = append(productObject[index].Varieties, newVariety)
+	}
+
+	return productObject, nil
 }
