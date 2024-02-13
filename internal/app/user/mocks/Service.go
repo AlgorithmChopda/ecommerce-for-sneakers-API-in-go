@@ -102,21 +102,31 @@ func (_m *Service) LoginUser(email string, passsword string) (string, error) {
 }
 
 // RegisterUser provides a mock function with given fields: userInfo, userRole
-func (_m *Service) RegisterUser(userInfo dto.RegisterUserRequest, userRole string) error {
+func (_m *Service) RegisterUser(userInfo dto.RegisterUserRequest, userRole string) (dto.UserRegisterResponseObject, error) {
 	ret := _m.Called(userInfo, userRole)
 
 	if len(ret) == 0 {
 		panic("no return value specified for RegisterUser")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(dto.RegisterUserRequest, string) error); ok {
+	var r0 dto.UserRegisterResponseObject
+	var r1 error
+	if rf, ok := ret.Get(0).(func(dto.RegisterUserRequest, string) (dto.UserRegisterResponseObject, error)); ok {
+		return rf(userInfo, userRole)
+	}
+	if rf, ok := ret.Get(0).(func(dto.RegisterUserRequest, string) dto.UserRegisterResponseObject); ok {
 		r0 = rf(userInfo, userRole)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(dto.UserRegisterResponseObject)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(dto.RegisterUserRequest, string) error); ok {
+		r1 = rf(userInfo, userRole)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewService creates a new instance of Service. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

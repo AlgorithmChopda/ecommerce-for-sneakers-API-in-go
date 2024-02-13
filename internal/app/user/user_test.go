@@ -80,7 +80,7 @@ func TestRegisterUser(t *testing.T) {
 			test.setup(userRepo, roleRepo)
 
 			// test service
-			err := service.RegisterUser(test.input, "buyer")
+			_, err := service.RegisterUser(test.input, "buyer")
 
 			if (err != nil) != test.isErrorExpected {
 				t.Errorf("Test Failed, expected error to be %v, but got err %v", test.isErrorExpected, err != nil)
