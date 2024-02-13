@@ -1,6 +1,7 @@
 package constants
 
 const EMAIL_REGEX = `^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$1`
+const PASSWORD_REGEX = `^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$`
 
 const ADMIN = 1
 const BUYER = 2

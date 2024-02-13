@@ -43,6 +43,11 @@ func (req *RegisterUserRequest) Validate() error {
 		return apperrors.EmptyError{Message: "invalid mobile no"}
 	}
 
+	err = ValidatePassword(req.Password)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -153,4 +158,23 @@ type UserRegisterResponseObject struct {
 	Address      string `json:"address"`
 	City         string `json:"city"`
 	PostalCode   int    `json:"postal_code"`
+}
+
+func ValidatePassword(password string) error {
+	if len(password) < 8 {
+		return apperrors.EmptyError{Message: "password must be at least 8 characters long"}
+	}
+
+	if ok, _ := regexp.MatchString(`[A-Z]`, password); !ok {
+		return apperrors.EmptyError{Message: "password must contain at least one uppercase letter"}
+	}
+
+	if ok, _ := regexp.MatchString(`[a-z]`, password); !ok {
+		return apperrors.EmptyError{Message: "password must contain at least one lowercase letter"}
+	}
+	if ok, _ := regexp.MatchString(`\d`, password); !ok {
+		return apperrors.EmptyError{Message: "password must contain at least one digit"}
+	}
+
+	return nil
 }

@@ -3,7 +3,7 @@ package apperrors
 type UserAlreadyPresent struct{}
 
 func (u UserAlreadyPresent) Error() string {
-	return "email already exists"
+	return "user already exists"
 }
 
 type NotFoundError struct{ Message string }
