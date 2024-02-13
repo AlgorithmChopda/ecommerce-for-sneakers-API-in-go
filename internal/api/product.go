@@ -142,3 +142,41 @@ func GetProductWithFilterHandler(productSvc product.Service) func(w http.Respons
 		middleware.SuccessResponse(w, http.StatusOK, product, "Product Fetched")
 	}
 }
+
+func UpdateProductDetailHandler(productSvc product.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		productDetailId, err := helpers.GetPathParameter(r, "id")
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		var req dto.UpdateProductDetailRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		err = req.Validate()
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+
+		err = productSvc.UpdateProductPriceAndQuantity(req, tokenData.Id, productDetailId)
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusOK, nil, "product detail updated")
+
+	}
+}

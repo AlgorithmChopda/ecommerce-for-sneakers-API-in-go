@@ -3,6 +3,8 @@ package dto
 import (
 	"errors"
 	"time"
+
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 )
 
 type CreateProductRequest struct {
@@ -65,6 +67,28 @@ type ResponseVarities struct {
 type UpdateProductRequest struct {
 	Name        string
 	Description string
+}
+
+type UpdateProductDetailRequest struct {
+	Price    int `json:"price"`
+	Quantity int `json:"quantity"`
+}
+
+func (req *UpdateProductDetailRequest) Validate() error {
+	err := ValidateStruct(*req)
+	if err != nil {
+		return err
+	}
+
+	if req.Price <= 0 {
+		return apperrors.EmptyError{Message: "price cannot be less than or equal to 0"}
+	}
+
+	if req.Quantity < 0 {
+		return apperrors.EmptyError{Message: "quantity cannot be negative"}
+	}
+
+	return nil
 }
 
 func (req *CreateProductRequest) Validate() error {

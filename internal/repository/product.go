@@ -9,4 +9,5 @@ type ProductRepository interface {
 	UpdateProduct(productId int, name, description string, sellerId int) error
 	UpdateProductDetail(productDetailId, quantity int) error
 	GetProductListWithFilters(filters map[string]string, skip, limit int) ([]dto.ResponseProduct, error)
+	UpdateProductPriceAndQuantity(sellerId, productDetailId, quantity, price int) error
 }

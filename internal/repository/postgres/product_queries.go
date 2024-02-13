@@ -13,7 +13,7 @@ const CreateProductDetailQuery = `INSERT INTO productdetail (product_id, size, q
 
 const GetAllProductsAndDetail = `SELECT * FROM product JOIN productdetail ON product.id = productdetail.product_id`
 
-const GetProductById = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity,b.name AS brand_name
+const GetProductById = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity, pd.id, b.name AS brand_name
 						FROM product p
 						JOIN productdetail pd ON p.id = pd.product_id
 						JOIN brand b ON p.brand_id = b.id
@@ -21,11 +21,18 @@ const GetProductById = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.qu
 
 const UpdateProduct = `UPDATE product
 					   SET name = $2,description = $3, updated_at = CURRENT_TIMESTAMP
-					   WHERE product.id = $1;`
+					   WHERE product.id = $1 AND seller_id = $4;`
 
 const UpdateProductDetail = `UPDATE productdetail
 							 SET quantity = $2
-							 WHERE id = $1 AND seller_id = $4`
+							 WHERE id = $1`
+
+const UpdateProductPriceAndQuantity = `UPDATE productdetail
+										SET quantity = $3, price = $4
+										FROM product
+										WHERE productdetail.product_id = product.id
+										AND productdetail.id = $2
+										AND product.seller_id = $1`
 
 func getQueryForFilters(filters map[string]string, skip, limit int) string {
 	var rawQuery string = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity, pd.id, b.name AS brand_name 

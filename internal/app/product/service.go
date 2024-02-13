@@ -17,6 +17,7 @@ type Service interface {
 	GetProductByID(productId int) (dto.ResponseProduct, error)
 	UpdateProduct(req dto.UpdateProductRequest, productId int, sellerId int) error
 	GetProductsByFilters(filters map[string]string, skip, limit int) ([]dto.ResponseProduct, error)
+	UpdateProductPriceAndQuantity(req dto.UpdateProductDetailRequest, sellerId, productDetailId int) error
 }
 
 func NewService(productRepoObject repository.ProductRepository, brandRepoObject repository.BrandRepository) Service {
@@ -95,4 +96,13 @@ func (productSvc *service) GetProductsByFilters(filters map[string]string, skip,
 	}
 
 	return productList, err
+}
+
+func (productSvc *service) UpdateProductPriceAndQuantity(req dto.UpdateProductDetailRequest, sellerId, productDetailId int) error {
+	err := productSvc.productRepo.UpdateProductPriceAndQuantity(sellerId, productDetailId, req.Quantity, req.Price)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

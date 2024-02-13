@@ -28,10 +28,11 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 
 	// Product
 	productRouter := router.PathPrefix("/product").Subrouter()
-	productRouter.HandleFunc("", GetProductWithFilterHandler(deps.ProductService)).Methods(http.MethodGet)
+	productRouter.HandleFunc("", middleware.CheckAuth(GetProductWithFilterHandler(deps.ProductService), constants.ALL)).Methods(http.MethodGet)
 	productRouter.HandleFunc("", middleware.CheckAuth(CreateProductHandler(deps.ProductService), constants.SELLER)).Methods(http.MethodPost)
-	productRouter.HandleFunc("/{id}", GetProductHandler(deps.ProductService)).Methods(http.MethodGet)
+	productRouter.HandleFunc("/{id}", middleware.CheckAuth(GetProductHandler(deps.ProductService), constants.ALL)).Methods(http.MethodGet)
 	productRouter.HandleFunc("/{id}", middleware.CheckAuth(UpdateProductHandler(deps.ProductService), constants.SELLER)).Methods(http.MethodPatch)
+	productRouter.HandleFunc("/detail/{id}", middleware.CheckAuth(UpdateProductDetailHandler(deps.ProductService), constants.SELLER)).Methods(http.MethodPatch)
 
 	// Order / Cart
 	orderRouter := router.PathPrefix("/cart").Subrouter()

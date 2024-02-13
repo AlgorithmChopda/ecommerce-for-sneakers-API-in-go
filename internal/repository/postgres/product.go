@@ -63,7 +63,7 @@ func (product *productStore) GetProductById(productId int) (dto.ResponseProduct,
 		err = rows.Scan(
 			&readProduct.ProductID, &readProduct.Name, &readProduct.Description, &readProduct.CreatedAt, &readProduct.UpdatedAt,
 			&readProduct.SellerID, &readProduct.BrandID, &readProduct.Size, &readProduct.Color, &readProduct.Image,
-			&readProduct.Price, &readProduct.Quantity, &readProduct.BrandName,
+			&readProduct.Price, &readProduct.Quantity, &readProduct.ProductDetailId, &readProduct.BrandName,
 		)
 
 		if err != nil {
@@ -125,6 +125,26 @@ func (product *productStore) UpdateProduct(productId int, name, description stri
 
 func (product *productStore) UpdateProductDetail(productDetailId, quantity int) error {
 	res, err := product.DB.Exec(UpdateProductDetail, productDetailId, quantity)
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("error while updating product detail")
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("error while updating product detail")
+	}
+
+	if rowsAffected == 0 {
+		return apperrors.NotFoundError{Message: "no such product found"}
+	}
+
+	return nil
+}
+
+func (product *productStore) UpdateProductPriceAndQuantity(sellerId, productDetailId, quantity, price int) error {
+	res, err := product.DB.Exec(UpdateProductPriceAndQuantity, sellerId, productDetailId, quantity, price)
 	if err != nil {
 		fmt.Println(err)
 		return errors.New("error while updating product detail")
