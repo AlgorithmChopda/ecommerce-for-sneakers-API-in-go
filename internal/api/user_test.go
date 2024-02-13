@@ -2,12 +2,14 @@ package api
 
 import (
 	"bytes"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app/user/mocks"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -170,5 +172,53 @@ func TestRegisterUserHandler(t *testing.T) {
 			}
 		})
 	}
+}
 
+func TestGetUserListHandler(t *testing.T) {
+	websitesSvc := mocks.NewService(t)
+	getUserListHandler := GetUserListHandler(websitesSvc)
+
+	tests := []struct {
+		name               string
+		input              string
+		setup              func(mockSvc *mocks.Service)
+		expectedStatusCode int
+	}{
+		{
+			name:  "error getting lst",
+			input: "",
+			setup: func(mockSvc *mocks.Service) {
+				mockSvc.On("GetUserList", mock.Anything).Return([]dto.UserResponseObject{}, errors.New("error")).Once()
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+		},
+		{
+			name:  "success getting lst",
+			input: "",
+			setup: func(mockSvc *mocks.Service) {
+				mockSvc.On("GetUserList", mock.Anything).Return([]dto.UserResponseObject{}, nil).Once()
+			},
+			expectedStatusCode: http.StatusOK,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.setup(websitesSvc)
+
+			req, err := http.NewRequest("GET", "/user", bytes.NewBuffer([]byte(test.input)))
+			if err != nil {
+				t.Fatal(err)
+				return
+			}
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(getUserListHandler)
+			handler.ServeHTTP(rr, req)
+
+			if rr.Result().StatusCode != test.expectedStatusCode {
+				t.Errorf("Expected %d but got %d", test.expectedStatusCode, rr.Result().StatusCode)
+			}
+		})
+	}
 }

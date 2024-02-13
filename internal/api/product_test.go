@@ -24,7 +24,7 @@ func TestCreateProductHandler(t *testing.T) {
 		name               string
 		input              string
 		isToken            bool
-		token              interface{}
+		token              dto.JwtToken
 		setup              func(mockSvc *mocks.Service)
 		expectedStatusCode int
 	}{

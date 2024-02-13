@@ -38,8 +38,8 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	orderRouter.HandleFunc("", middleware.CheckAuth(CreateOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPost)
 	orderRouter.HandleFunc("/{id}", middleware.CheckAuth(GetAllOrderItemsHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodGet)
 	orderRouter.HandleFunc("/{id}/order", middleware.CheckAuth(PlaceOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPost)
-	orderRouter.HandleFunc("/{id}/{productDetailId}", middleware.CheckAuth(AddOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPost)
-	orderRouter.HandleFunc("/{id}/{productDetailId}", middleware.CheckAuth(UpdateOrderItemHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPut)
+	orderRouter.HandleFunc("/{id}/product/{productDetailId}", middleware.CheckAuth(AddOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPost)
+	orderRouter.HandleFunc("/{id}/product/{productDetailId}", middleware.CheckAuth(UpdateOrderItemHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodPut)
 	// TODO cart/{id}/count service and api remaining
 
 	orderPlacedRouted := router.PathPrefix("/order").Subrouter()

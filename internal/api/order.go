@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app/order"
@@ -25,7 +26,7 @@ func CreateOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *h
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, cartId, "Cart created")
+		middleware.SuccessResponse(w, http.StatusCreated, cartId, "Cart created")
 	}
 }
 
@@ -38,10 +39,8 @@ func AddOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *http
 
 		orderId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
-			if err != nil {
-				middleware.ErrorResponse(w, http.StatusBadRequest, err)
-				return
-			}
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
 		}
 
 		productDetailId, err := helpers.GetPathParameter(r, "productDetailId")
@@ -108,10 +107,8 @@ func UpdateOrderItemHandler(orderSvc order.Service) func(w http.ResponseWriter, 
 			return
 		}
 
-		// TODO validate not working for nested object
-
 		if req.Quantity < 0 {
-			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			middleware.ErrorResponse(w, http.StatusBadRequest, errors.New("quantity cannot be negative"))
 			return
 		}
 
@@ -136,10 +133,8 @@ func PlaceOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *ht
 
 		orderId, err := helpers.GetPathParameter(r, "id")
 		if err != nil {
-			if err != nil {
-				middleware.ErrorResponse(w, http.StatusBadRequest, err)
-				return
-			}
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
 		}
 
 		var req struct {
@@ -153,7 +148,7 @@ func PlaceOrderHandler(orderSvc order.Service) func(w http.ResponseWriter, r *ht
 		}
 
 		if req.ShippingAddress == "" {
-			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			middleware.ErrorResponse(w, http.StatusBadRequest, errors.New("invalid shipping address"))
 			return
 		}
 

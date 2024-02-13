@@ -78,7 +78,7 @@ func GetUserListHandler(userSvc user.Service) func(w http.ResponseWriter, r *htt
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, userList, "user list fetched successfully")
+		middleware.SuccessResponse(w, http.StatusOK, userList, "user list fetched successfully")
 	}
 }
 
