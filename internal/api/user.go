@@ -29,14 +29,14 @@ func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *ht
 			return
 		}
 
-		err = userSvc.RegisterUser(req, "buyer")
+		user, err := userSvc.RegisterUser(req, "buyer")
 		if err != nil {
 			status, err := apperrors.MapError(err)
 			middleware.ErrorResponse(w, status, err)
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, nil, "User Created")
+		middleware.SuccessResponse(w, http.StatusAccepted, user, "User Created")
 	}
 }
 
@@ -118,13 +118,13 @@ func RegisterAdminHandler(userSvc user.Service) func(w http.ResponseWriter, r *h
 			return
 		}
 
-		err = userSvc.RegisterUser(req, "admin")
+		admin, err := userSvc.RegisterUser(req, "admin")
 		if err != nil {
 			status, err := apperrors.MapError(err)
 			middleware.ErrorResponse(w, status, err)
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, nil, "User Created")
+		middleware.SuccessResponse(w, http.StatusAccepted, admin, "Admin Created")
 	}
 }

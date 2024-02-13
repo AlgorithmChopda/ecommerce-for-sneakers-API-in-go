@@ -19,7 +19,7 @@ type service struct {
 }
 
 type Service interface {
-	RegisterUser(userInfo dto.RegisterUserRequest, userRole string) error
+	RegisterUser(userInfo dto.RegisterUserRequest, userRole string) (dto.UserRegisterResponseObject, error)
 	LoginUser(email, passsword string) (string, error)
 	GetUserList(r *http.Request) ([]dto.UserResponseObject, error)
 	GetUserProfile(userId int) (dto.UserResponseObject, error)
@@ -32,26 +32,26 @@ func NewService(userRepoObject repository.UserRepository, roleRepoObject reposit
 	}
 }
 
-func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest, userRole string) error {
+func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest, userRole string) (dto.UserRegisterResponseObject, error) {
 	fmt.Println(userInfo.DateOfBirth)
 	parsedDOB, err := helpers.ParseDate(userInfo.DateOfBirth)
 	if err != nil {
-		return err
+		return dto.UserRegisterResponseObject{}, err
 	}
 
 	isPresent := svc.userRepo.IsUserWithEmailPresent(userInfo.Email)
 	if isPresent {
-		return apperrors.UserAlreadyPresent{}
+		return dto.UserRegisterResponseObject{}, apperrors.UserAlreadyPresent{}
 	}
 
 	roleId, err := svc.roleRepo.GetRoleId(userRole)
 	if err != nil {
-		return err
+		return dto.UserRegisterResponseObject{}, err
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userInfo.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return dto.UserRegisterResponseObject{}, err
 	}
 
 	values := []interface{}{
@@ -69,10 +69,20 @@ func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest, userRole stri
 
 	err = svc.userRepo.CreateUser(values)
 	if err != nil {
-		return err
+		return dto.UserRegisterResponseObject{}, err
 	}
 
-	return nil
+	userResponse := dto.UserRegisterResponseObject{
+		FirstName:    userInfo.FirstName,
+		LastName:     userInfo.LastName,
+		Email:        userInfo.Email,
+		DateOfBirth:  userInfo.DateOfBirth,
+		MobileNumber: userInfo.MobileNo,
+		Address:      userInfo.Address,
+		City:         userInfo.City,
+		PostalCode:   userInfo.PostalCode,
+	}
+	return userResponse, nil
 }
 
 func (svc *service) LoginUser(email, passsword string) (string, error) {
