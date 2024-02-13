@@ -60,6 +60,36 @@ func (_m *Service) GetSellerList() ([]dto.SellerResponseObject, error) {
 	return r0, r1
 }
 
+// GetSellerMonthlySale provides a mock function with given fields: sellerId
+func (_m *Service) GetSellerMonthlySale(sellerId int) ([]dto.SaleResponse, error) {
+	ret := _m.Called(sellerId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetSellerMonthlySale")
+	}
+
+	var r0 []dto.SaleResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int) ([]dto.SaleResponse, error)); ok {
+		return rf(sellerId)
+	}
+	if rf, ok := ret.Get(0).(func(int) []dto.SaleResponse); ok {
+		r0 = rf(sellerId)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dto.SaleResponse)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(int) error); ok {
+		r1 = rf(sellerId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RegisterSeller provides a mock function with given fields: sellerInfo
 func (_m *Service) RegisterSeller(sellerInfo dto.RegisterSellerRequest) error {
 	ret := _m.Called(sellerInfo)

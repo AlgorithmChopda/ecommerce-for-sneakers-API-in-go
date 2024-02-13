@@ -13,3 +13,16 @@ const GetAllSellers = `SELECT first_name, last_name, email, date_of_birth, mobil
 						WHERE role_id = $1;`
 
 const DeleteSeller = `DELETE FROM users where id = $1`
+
+const GetSellerMonthlySale = `SELECT TO_CHAR(o.order_date, 'Month') AS month,
+							SUM(oi.price * oi.quantity) AS sale
+							from orders as o
+							join orderitem as oi
+							on o.id = oi.order_id
+							join productdetail as pd
+							on oi.product_detail_id = pd.id
+							join product as p
+							on pd.product_id = p.id
+
+							where o.is_cart = '0' and p.seller_id = $1
+							GROUP BY TO_CHAR(o.order_date, 'Month');`

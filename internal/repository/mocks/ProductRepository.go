@@ -116,17 +116,17 @@ func (_m *ProductRepository) GetProductListWithFilters(filters map[string]string
 	return r0, r1
 }
 
-// UpdateProduct provides a mock function with given fields: productId, name, description
-func (_m *ProductRepository) UpdateProduct(productId int, name string, description string) error {
-	ret := _m.Called(productId, name, description)
+// UpdateProduct provides a mock function with given fields: productId, name, description, sellerId
+func (_m *ProductRepository) UpdateProduct(productId int, name string, description string, sellerId int) error {
+	ret := _m.Called(productId, name, description, sellerId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateProduct")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int, string, string) error); ok {
-		r0 = rf(productId, name, description)
+	if rf, ok := ret.Get(0).(func(int, string, string, int) error); ok {
+		r0 = rf(productId, name, description, sellerId)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -145,6 +145,24 @@ func (_m *ProductRepository) UpdateProductDetail(productDetailId int, quantity i
 	var r0 error
 	if rf, ok := ret.Get(0).(func(int, int) error); ok {
 		r0 = rf(productDetailId, quantity)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateProductPriceAndQuantity provides a mock function with given fields: sellerId, productDetailId, quantity, price
+func (_m *ProductRepository) UpdateProductPriceAndQuantity(sellerId int, productDetailId int, quantity int, price int) error {
+	ret := _m.Called(sellerId, productDetailId, quantity, price)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateProductPriceAndQuantity")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int, int, int, int) error); ok {
+		r0 = rf(sellerId, productDetailId, quantity, price)
 	} else {
 		r0 = ret.Error(0)
 	}

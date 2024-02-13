@@ -7,4 +7,5 @@ type SellerRepository interface {
 	CreateCompany(sellerCompanyInfo []any) (int64, error)
 	GetAllSellers(roleId int) ([]dto.SellerResponseObject, error)
 	DeleteSeller(sellerId int) error
+	GetSellerMonthlySale(sellerId int) ([]dto.SaleResponse, error)
 }

@@ -178,3 +178,8 @@ func ValidatePassword(password string) error {
 
 	return nil
 }
+
+type SaleResponse struct {
+	Month string `json:"month"`
+	Sale  string `json:"sale"`
+}

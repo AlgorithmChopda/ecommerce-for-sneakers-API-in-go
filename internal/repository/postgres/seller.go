@@ -89,3 +89,23 @@ func (seller *sellerStore) DeleteSeller(sellerId int) error {
 
 	return nil
 }
+
+func (seller *sellerStore) GetSellerMonthlySale(sellerId int) ([]dto.SaleResponse, error) {
+	rows, err := seller.DB.Query(GetSellerMonthlySale, sellerId)
+	if err != nil {
+		return nil, errors.New("error while fetching sale records")
+	}
+
+	var saleRecord []dto.SaleResponse
+	for rows.Next() {
+		var currentSale dto.SaleResponse
+		err := rows.Scan(&currentSale.Month, &currentSale.Sale)
+		if err != nil {
+			return nil, err
+		}
+
+		saleRecord = append(saleRecord, currentSale)
+	}
+
+	return saleRecord, nil
+}

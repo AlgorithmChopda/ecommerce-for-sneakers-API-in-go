@@ -1,6 +1,8 @@
 package seller
 
 import (
+	"fmt"
+
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/helpers"
@@ -18,6 +20,7 @@ type Service interface {
 	RegisterSeller(sellerInfo dto.RegisterSellerRequest) error
 	GetSellerList() ([]dto.SellerResponseObject, error)
 	DeleteSeller(sellerId int) error
+	GetSellerMonthlySale(sellerId int) ([]dto.SaleResponse, error)
 }
 
 func NewService(sellerRepoObject repository.SellerRepository, userRepoObject repository.UserRepository, roleRepoObject repository.RoleRepository) Service {
@@ -34,6 +37,7 @@ func (sellerSvc *service) RegisterSeller(sellerInfo dto.RegisterSellerRequest) e
 		return err
 	}
 
+	fmt.Println("line 39")
 	isPresent := sellerSvc.userRepo.IsUserWithEmailPresent(sellerInfo.Email)
 	if isPresent {
 		return apperrors.UserAlreadyPresent{}
@@ -102,4 +106,13 @@ func (sellerSvc *service) DeleteSeller(sellerId int) error {
 	}
 
 	return nil
+}
+
+func (svc *service) GetSellerMonthlySale(sellerId int) ([]dto.SaleResponse, error) {
+	userDetail, err := svc.sellerRepo.GetSellerMonthlySale(sellerId)
+	if err != nil {
+		return nil, err
+	}
+
+	return userDetail, nil
 }

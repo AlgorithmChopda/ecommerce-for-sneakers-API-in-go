@@ -68,3 +68,22 @@ func DeleteSellerHandler(sellerSvc seller.Service) func(w http.ResponseWriter, r
 		middleware.SuccessResponse(w, http.StatusOK, nil, "seller deleted successfully")
 	}
 }
+
+func GetSellerMonthlySaleHandler(sellerSvc seller.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sellerId, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		sellerSale, err := sellerSvc.GetSellerMonthlySale(sellerId.Id)
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusOK, sellerSale, "seller monthly sale fetched successfully")
+	}
+}
