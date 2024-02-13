@@ -19,7 +19,7 @@ type service struct {
 }
 
 type Service interface {
-	RegisterUser(userInfo dto.RegisterUserRequest) error
+	RegisterUser(userInfo dto.RegisterUserRequest, userRole string) error
 	LoginUser(email, passsword string) (string, error)
 	GetUserList(r *http.Request) ([]dto.UserResponseObject, error)
 	GetUserProfile(userId int) (dto.UserResponseObject, error)
@@ -32,7 +32,8 @@ func NewService(userRepoObject repository.UserRepository, roleRepoObject reposit
 	}
 }
 
-func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest) error {
+func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest, userRole string) error {
+	fmt.Println(userInfo.DateOfBirth)
 	parsedDOB, err := helpers.ParseDate(userInfo.DateOfBirth)
 	if err != nil {
 		return err
@@ -43,7 +44,7 @@ func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest) error {
 		return apperrors.UserAlreadyPresent{}
 	}
 
-	roleId, err := svc.roleRepo.GetRoleId("buyer")
+	roleId, err := svc.roleRepo.GetRoleId(userRole)
 	if err != nil {
 		return err
 	}

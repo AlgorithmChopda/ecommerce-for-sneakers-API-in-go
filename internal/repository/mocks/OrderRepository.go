@@ -86,6 +86,24 @@ func (_m *OrderRepository) Create(userId int) (int, error) {
 	return r0, r1
 }
 
+// DeleteItemFromOrder provides a mock function with given fields: orderId, productDetailId
+func (_m *OrderRepository) DeleteItemFromOrder(orderId int, productDetailId int) error {
+	ret := _m.Called(orderId, productDetailId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteItemFromOrder")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int, int) error); ok {
+		r0 = rf(orderId, productDetailId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetAllOrderItems provides a mock function with given fields: orderId
 func (_m *OrderRepository) GetAllOrderItems(orderId int) (interface{}, error) {
 	ret := _m.Called(orderId)

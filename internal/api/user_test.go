@@ -129,7 +129,7 @@ func TestRegisterUserHandler(t *testing.T) {
 				"postal_code": 411045
 			}`,
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("RegisterUser", mock.Anything).Return(nil).Once()
+				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			expectedStatusCode: http.StatusAccepted,
 		},
@@ -147,7 +147,7 @@ func TestRegisterUserHandler(t *testing.T) {
 				"postal_code": 411045
 			}`,
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("RegisterUser", mock.Anything).Return(apperrors.UserAlreadyPresent{}).Once()
+				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(apperrors.UserAlreadyPresent{}).Once()
 			},
 			expectedStatusCode: http.StatusConflict,
 		},

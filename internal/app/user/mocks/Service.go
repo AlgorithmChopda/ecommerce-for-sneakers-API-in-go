@@ -101,17 +101,17 @@ func (_m *Service) LoginUser(email string, passsword string) (string, error) {
 	return r0, r1
 }
 
-// RegisterUser provides a mock function with given fields: userInfo
-func (_m *Service) RegisterUser(userInfo dto.RegisterUserRequest) error {
-	ret := _m.Called(userInfo)
+// RegisterUser provides a mock function with given fields: userInfo, userRole
+func (_m *Service) RegisterUser(userInfo dto.RegisterUserRequest, userRole string) error {
+	ret := _m.Called(userInfo, userRole)
 
 	if len(ret) == 0 {
 		panic("no return value specified for RegisterUser")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(dto.RegisterUserRequest) error); ok {
-		r0 = rf(userInfo)
+	if rf, ok := ret.Get(0).(func(dto.RegisterUserRequest, string) error); ok {
+		r0 = rf(userInfo, userRole)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -58,9 +58,9 @@ func (_m *Service) GetProductByID(productId int) (dto.ResponseProduct, error) {
 	return r0, r1
 }
 
-// GetProductsByFilters provides a mock function with given fields: filters
-func (_m *Service) GetProductsByFilters(filters map[string]string) ([]dto.ResponseProduct, error) {
-	ret := _m.Called(filters)
+// GetProductsByFilters provides a mock function with given fields: filters, skip, limit
+func (_m *Service) GetProductsByFilters(filters map[string]string, skip int, limit int) ([]dto.ResponseProduct, error) {
+	ret := _m.Called(filters, skip, limit)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetProductsByFilters")
@@ -68,19 +68,19 @@ func (_m *Service) GetProductsByFilters(filters map[string]string) ([]dto.Respon
 
 	var r0 []dto.ResponseProduct
 	var r1 error
-	if rf, ok := ret.Get(0).(func(map[string]string) ([]dto.ResponseProduct, error)); ok {
-		return rf(filters)
+	if rf, ok := ret.Get(0).(func(map[string]string, int, int) ([]dto.ResponseProduct, error)); ok {
+		return rf(filters, skip, limit)
 	}
-	if rf, ok := ret.Get(0).(func(map[string]string) []dto.ResponseProduct); ok {
-		r0 = rf(filters)
+	if rf, ok := ret.Get(0).(func(map[string]string, int, int) []dto.ResponseProduct); ok {
+		r0 = rf(filters, skip, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]dto.ResponseProduct)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(map[string]string) error); ok {
-		r1 = rf(filters)
+	if rf, ok := ret.Get(1).(func(map[string]string, int, int) error); ok {
+		r1 = rf(filters, skip, limit)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -88,17 +88,17 @@ func (_m *Service) GetProductsByFilters(filters map[string]string) ([]dto.Respon
 	return r0, r1
 }
 
-// UpdateProduct provides a mock function with given fields: req, productId
-func (_m *Service) UpdateProduct(req dto.UpdateProductRequest, productId int) error {
-	ret := _m.Called(req, productId)
+// UpdateProduct provides a mock function with given fields: req, productId, sellerId
+func (_m *Service) UpdateProduct(req dto.UpdateProductRequest, productId int, sellerId int) error {
+	ret := _m.Called(req, productId, sellerId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateProduct")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(dto.UpdateProductRequest, int) error); ok {
-		r0 = rf(req, productId)
+	if rf, ok := ret.Get(0).(func(dto.UpdateProductRequest, int, int) error); ok {
+		r0 = rf(req, productId, sellerId)
 	} else {
 		r0 = ret.Error(0)
 	}

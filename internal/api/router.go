@@ -17,6 +17,7 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	// seller buyer admin login
 	userRouter.HandleFunc("/login", LoginUserHandler(deps.UserService)).Methods(http.MethodPost)
 	userRouter.HandleFunc("/register", RegisterUserHandler(deps.UserService)).Methods(http.MethodPost)
+	userRouter.HandleFunc("/register/admin", middleware.CheckAuth(RegisterAdminHandler(deps.UserService), constants.ADMIN)).Methods(http.MethodPost)
 	userRouter.HandleFunc("", middleware.CheckAuth(GetUserListHandler(deps.UserService), constants.ADMIN)).Methods(http.MethodGet)
 	userRouter.HandleFunc("/profile", middleware.CheckAuth(GetUserProfileHandler(deps.UserService), constants.ALL)).Methods(http.MethodGet)
 

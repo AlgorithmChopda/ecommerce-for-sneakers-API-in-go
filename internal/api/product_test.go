@@ -280,7 +280,7 @@ func TestUpdateProductHandler(t *testing.T) {
 				 ]
 			  }`,
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("UpdateProduct", mock.Anything, mock.Anything).Return(nil).Once()
+				mockSvc.On("UpdateProduct", mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			expectedStatusCode: http.StatusOK,
 		},
@@ -317,7 +317,7 @@ func TestUpdateProductHandler(t *testing.T) {
 				 ]
 			  }`,
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("UpdateProduct", mock.Anything, mock.Anything).Return(apperrors.NotFoundError{}).Once()
+				mockSvc.On("UpdateProduct", mock.Anything, mock.Anything, 1).Return(apperrors.NotFoundError{}).Once()
 			},
 			expectedStatusCode: http.StatusNotFound,
 		},
@@ -368,7 +368,7 @@ func TestGetProductWithFilterHandler(t *testing.T) {
 			id:    "",
 			input: "?color=red&brand=puma&size=7",
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("GetProductsByFilters", mock.Anything).Return([]dto.ResponseProduct{}, nil).Once()
+				mockSvc.On("GetProductsByFilters", mock.Anything, mock.Anything, mock.Anything).Return([]dto.ResponseProduct{}, nil).Once()
 			},
 			expectedStatusCode: http.StatusOK,
 		},
@@ -377,7 +377,7 @@ func TestGetProductWithFilterHandler(t *testing.T) {
 			id:    "",
 			input: "?color=red&brand=puma&size=7",
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("GetProductsByFilters", mock.Anything).Return([]dto.ResponseProduct{}, errors.New("error")).Once()
+				mockSvc.On("GetProductsByFilters", mock.Anything, mock.Anything, mock.Anything).Return([]dto.ResponseProduct{}, errors.New("error")).Once()
 			},
 			expectedStatusCode: http.StatusInternalServerError,
 		},

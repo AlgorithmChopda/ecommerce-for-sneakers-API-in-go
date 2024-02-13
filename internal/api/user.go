@@ -29,7 +29,7 @@ func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *ht
 			return
 		}
 
-		err = userSvc.RegisterUser(req)
+		err = userSvc.RegisterUser(req, "buyer")
 		if err != nil {
 			status, err := apperrors.MapError(err)
 			middleware.ErrorResponse(w, status, err)
@@ -98,5 +98,33 @@ func GetUserProfileHandler(userSvc user.Service) func(w http.ResponseWriter, r *
 		}
 
 		middleware.SuccessResponse(w, http.StatusAccepted, userProfile, "user profile fetched successfully")
+	}
+}
+
+func RegisterAdminHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req dto.RegisterUserRequest
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			fmt.Println("invalid input request")
+			middleware.ErrorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+
+		err = req.Validate()
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		err = userSvc.RegisterUser(req, "admin")
+		if err != nil {
+			status, err := apperrors.MapError(err)
+			middleware.ErrorResponse(w, status, err)
+			return
+		}
+
+		middleware.SuccessResponse(w, http.StatusAccepted, nil, "User Created")
 	}
 }

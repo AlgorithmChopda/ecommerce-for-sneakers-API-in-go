@@ -102,8 +102,8 @@ func (product *productStore) GetProductById(productId int) (dto.ResponseProduct,
 	return productObject, nil
 }
 
-func (product *productStore) UpdateProduct(productId int, name, description string) error {
-	res, err := product.DB.Exec(UpdateProduct, productId, name, description)
+func (product *productStore) UpdateProduct(productId int, name, description string, sellerId int) error {
+	res, err := product.DB.Exec(UpdateProduct, productId, name, description, sellerId)
 	if err != nil {
 		fmt.Println(err)
 		return errors.New("error while updating product")
@@ -142,8 +142,8 @@ func (product *productStore) UpdateProductDetail(productDetailId, quantity int) 
 	return nil
 }
 
-func (product *productStore) GetProductListWithFilters(filters map[string]string) ([]dto.ResponseProduct, error) {
-	rawQuery := getQueryForFilters(filters)
+func (product *productStore) GetProductListWithFilters(filters map[string]string, skip, limit int) ([]dto.ResponseProduct, error) {
+	rawQuery := getQueryForFilters(filters, skip, limit)
 	rows, err := product.DB.Query(rawQuery)
 	if err != nil {
 		fmt.Println(err)
@@ -199,5 +199,10 @@ func (product *productStore) GetProductListWithFilters(filters map[string]string
 		productObject[index].Varieties = append(productObject[index].Varieties, newVariety)
 	}
 
+	// low := min(len(),skip * limit)
+	// high := min(len(), low + limit)
+
+	// limit = int(math.Min(float64(skip+limit), float64(len(productObject))))
+	// return productObject[skip:limit], nil
 	return productObject, nil
 }

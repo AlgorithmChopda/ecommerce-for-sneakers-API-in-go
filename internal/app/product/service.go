@@ -15,8 +15,8 @@ type service struct {
 type Service interface {
 	CreateProduct(product dto.CreateProductRequest, sellerId int) error
 	GetProductByID(productId int) (dto.ResponseProduct, error)
-	UpdateProduct(req dto.UpdateProductRequest, productId int) error
-	GetProductsByFilters(filters map[string]string) ([]dto.ResponseProduct, error)
+	UpdateProduct(req dto.UpdateProductRequest, productId int, sellerId int) error
+	GetProductsByFilters(filters map[string]string, skip, limit int) ([]dto.ResponseProduct, error)
 }
 
 func NewService(productRepoObject repository.ProductRepository, brandRepoObject repository.BrandRepository) Service {
@@ -79,8 +79,8 @@ func (productSvc *service) GetProductByID(productId int) (dto.ResponseProduct, e
 	return product, err
 }
 
-func (productSvc *service) UpdateProduct(req dto.UpdateProductRequest, productId int) error {
-	err := productSvc.productRepo.UpdateProduct(productId, req.Name, req.Description)
+func (productSvc *service) UpdateProduct(req dto.UpdateProductRequest, productId int, sellerId int) error {
+	err := productSvc.productRepo.UpdateProduct(productId, req.Name, req.Description, sellerId)
 	if err != nil {
 		return err
 	}
@@ -88,8 +88,8 @@ func (productSvc *service) UpdateProduct(req dto.UpdateProductRequest, productId
 	return nil
 }
 
-func (productSvc *service) GetProductsByFilters(filters map[string]string) ([]dto.ResponseProduct, error) {
-	productList, err := productSvc.productRepo.GetProductListWithFilters(filters)
+func (productSvc *service) GetProductsByFilters(filters map[string]string, skip, limit int) ([]dto.ResponseProduct, error) {
+	productList, err := productSvc.productRepo.GetProductListWithFilters(filters, skip, limit)
 	if err != nil {
 		return nil, err
 	}

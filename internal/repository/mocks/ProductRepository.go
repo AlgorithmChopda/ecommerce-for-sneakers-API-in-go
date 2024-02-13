@@ -86,9 +86,9 @@ func (_m *ProductRepository) GetProductById(productId int) (dto.ResponseProduct,
 	return r0, r1
 }
 
-// GetProductListWithFilters provides a mock function with given fields: filters
-func (_m *ProductRepository) GetProductListWithFilters(filters map[string]string) ([]dto.ResponseProduct, error) {
-	ret := _m.Called(filters)
+// GetProductListWithFilters provides a mock function with given fields: filters, skip, limit
+func (_m *ProductRepository) GetProductListWithFilters(filters map[string]string, skip int, limit int) ([]dto.ResponseProduct, error) {
+	ret := _m.Called(filters, skip, limit)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetProductListWithFilters")
@@ -96,19 +96,19 @@ func (_m *ProductRepository) GetProductListWithFilters(filters map[string]string
 
 	var r0 []dto.ResponseProduct
 	var r1 error
-	if rf, ok := ret.Get(0).(func(map[string]string) ([]dto.ResponseProduct, error)); ok {
-		return rf(filters)
+	if rf, ok := ret.Get(0).(func(map[string]string, int, int) ([]dto.ResponseProduct, error)); ok {
+		return rf(filters, skip, limit)
 	}
-	if rf, ok := ret.Get(0).(func(map[string]string) []dto.ResponseProduct); ok {
-		r0 = rf(filters)
+	if rf, ok := ret.Get(0).(func(map[string]string, int, int) []dto.ResponseProduct); ok {
+		r0 = rf(filters, skip, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]dto.ResponseProduct)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(map[string]string) error); ok {
-		r1 = rf(filters)
+	if rf, ok := ret.Get(1).(func(map[string]string, int, int) error); ok {
+		r1 = rf(filters, skip, limit)
 	} else {
 		r1 = ret.Error(1)
 	}

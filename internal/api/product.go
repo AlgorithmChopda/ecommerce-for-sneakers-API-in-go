@@ -2,7 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app/product"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
@@ -83,7 +86,12 @@ func UpdateProductHandler(productSvc product.Service) func(w http.ResponseWriter
 			return
 		}
 
-		err = productSvc.UpdateProduct(req, productId)
+		tokenData, err := helpers.GetTokenData(r.Context())
+		if err != nil {
+			middleware.ErrorResponse(w, http.StatusUnauthorized, err)
+		}
+
+		err = productSvc.UpdateProduct(req, productId, tokenData.Id)
 		if err != nil {
 			status, err := apperrors.MapError(err)
 			middleware.ErrorResponse(w, status, err)
@@ -113,7 +121,20 @@ func GetProductWithFilterHandler(productSvc product.Service) func(w http.Respons
 			filters["name"] = brand
 		}
 
-		product, err := productSvc.GetProductsByFilters(filters)
+		// TODO add pagination
+		skip, err := strconv.Atoi(r.URL.Query().Get("skip"))
+		if err != nil {
+			skip = 0
+		}
+
+		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+		if err != nil {
+			limit = 10 // default limit
+		}
+		limit = int(math.Min(float64(limit), 100))
+
+		fmt.Println(skip, limit)
+		product, err := productSvc.GetProductsByFilters(filters, skip, limit)
 		if err != nil {
 			status, err := apperrors.MapError(err)
 			middleware.ErrorResponse(w, status, err)
