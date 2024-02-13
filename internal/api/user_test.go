@@ -121,7 +121,7 @@ func TestRegisterUserHandler(t *testing.T) {
 				"first_name": "naman",
 				"last_name": "chopda",
 				"email": "naman12@gmail.com",
-				"password": "123",
+				"password": "kjsdlffkj1H",
 				"date_of_birth": "20-12-2024",
 				"mobile_no": "8421556465",
 				"address": "Baner",
@@ -129,7 +129,7 @@ func TestRegisterUserHandler(t *testing.T) {
 				"postal_code": 411045
 			}`,
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(nil).Once()
+				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(dto.UserRegisterResponseObject{}, nil).Once()
 			},
 			expectedStatusCode: http.StatusAccepted,
 		},
@@ -139,7 +139,7 @@ func TestRegisterUserHandler(t *testing.T) {
 				"first_name": "naman",
 				"last_name": "chopda",
 				"email": "naman12@gmail.com",
-				"password": "123",
+				"password": "12dkksdH3",
 				"date_of_birth": "20-12-2024",
 				"mobile_no": "8421556465",
 				"address": "Baner",
@@ -147,7 +147,7 @@ func TestRegisterUserHandler(t *testing.T) {
 				"postal_code": 411045
 			}`,
 			setup: func(mockSvc *mocks.Service) {
-				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(apperrors.UserAlreadyPresent{}).Once()
+				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(dto.UserRegisterResponseObject{}, apperrors.UserAlreadyPresent{}).Once()
 			},
 			expectedStatusCode: http.StatusConflict,
 		},
@@ -214,6 +214,90 @@ func TestGetUserListHandler(t *testing.T) {
 
 			rr := httptest.NewRecorder()
 			handler := http.HandlerFunc(getUserListHandler)
+			handler.ServeHTTP(rr, req)
+
+			if rr.Result().StatusCode != test.expectedStatusCode {
+				t.Errorf("Expected %d but got %d", test.expectedStatusCode, rr.Result().StatusCode)
+			}
+		})
+	}
+}
+
+func TestAdminRegisterHandler(t *testing.T) {
+	websitesSvc := mocks.NewService(t)
+	addWebsitesHandler := RegisterAdminHandler(websitesSvc)
+
+	tests := []struct {
+		name               string
+		input              string
+		setup              func(mockSvc *mocks.Service)
+		expectedStatusCode int
+	}{
+		{
+			name:  "Invalid json",
+			input: `[`,
+			setup: func(mockSvc *mocks.Service) {
+			},
+			expectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			name: "Invalid request",
+			input: `{
+				"email": "123@com"
+			}`,
+			setup:              func(mockSvc *mocks.Service) {},
+			expectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			name: "Register successfull",
+			input: `{
+				"first_name": "naman",
+				"last_name": "chopda",
+				"email": "naman12@gmail.com",
+				"password": "kjsdlffkj1H",
+				"date_of_birth": "20-12-2024",
+				"mobile_no": "8421556465",
+				"address": "Baner",
+				"city": "Pune",
+				"postal_code": 411045
+			}`,
+			setup: func(mockSvc *mocks.Service) {
+				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(dto.UserRegisterResponseObject{}, nil).Once()
+			},
+			expectedStatusCode: http.StatusAccepted,
+		},
+		{
+			name: "Email already present",
+			input: `{
+				"first_name": "naman",
+				"last_name": "chopda",
+				"email": "naman12@gmail.com",
+				"password": "12dkksdH3",
+				"date_of_birth": "20-12-2024",
+				"mobile_no": "8421556465",
+				"address": "Baner",
+				"city": "Pune",
+				"postal_code": 411045
+			}`,
+			setup: func(mockSvc *mocks.Service) {
+				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(dto.UserRegisterResponseObject{}, apperrors.UserAlreadyPresent{}).Once()
+			},
+			expectedStatusCode: http.StatusConflict,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.setup(websitesSvc)
+
+			req, err := http.NewRequest("POST", "/user/register", bytes.NewBuffer([]byte(test.input)))
+			if err != nil {
+				t.Fatal(err)
+				return
+			}
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(addWebsitesHandler)
 			handler.ServeHTTP(rr, req)
 
 			if rr.Result().StatusCode != test.expectedStatusCode {

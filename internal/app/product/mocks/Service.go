@@ -106,6 +106,24 @@ func (_m *Service) UpdateProduct(req dto.UpdateProductRequest, productId int, se
 	return r0
 }
 
+// UpdateProductPriceAndQuantity provides a mock function with given fields: req, sellerId, productDetailId
+func (_m *Service) UpdateProductPriceAndQuantity(req dto.UpdateProductDetailRequest, sellerId int, productDetailId int) error {
+	ret := _m.Called(req, sellerId, productDetailId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateProductPriceAndQuantity")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(dto.UpdateProductDetailRequest, int, int) error); ok {
+		r0 = rf(req, sellerId, productDetailId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // NewService creates a new instance of Service. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewService(t interface {
