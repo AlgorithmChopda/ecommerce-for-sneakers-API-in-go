@@ -39,6 +39,10 @@ func (req *RegisterUserRequest) Validate() error {
 		return apperrors.EmptyError{Message: "invalid email format"}
 	}
 
+	if len(req.MobileNo) != 10 {
+		return apperrors.EmptyError{Message: "invalid mobile no"}
+	}
+
 	return nil
 }
 
