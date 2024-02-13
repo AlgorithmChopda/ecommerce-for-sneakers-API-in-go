@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
 	"net/http"
 	"strconv"
@@ -133,7 +132,6 @@ func GetProductWithFilterHandler(productSvc product.Service) func(w http.Respons
 		}
 		limit = int(math.Min(float64(limit), 100))
 
-		fmt.Println(skip, limit)
 		product, err := productSvc.GetProductsByFilters(filters, skip, limit)
 		if err != nil {
 			status, err := apperrors.MapError(err)

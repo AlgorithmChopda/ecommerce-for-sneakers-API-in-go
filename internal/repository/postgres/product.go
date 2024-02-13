@@ -85,11 +85,12 @@ func (product *productStore) GetProductById(productId int) (dto.ResponseProduct,
 		}
 
 		newVariety := dto.ResponseVarities{
-			Color:    readProduct.Color,
-			Image:    readProduct.Image,
-			Size:     readProduct.Size,
-			Price:    readProduct.Price,
-			Quantity: readProduct.Quantity,
+			Color:           readProduct.Color,
+			Image:           readProduct.Image,
+			Size:            readProduct.Size,
+			Price:           readProduct.Price,
+			Quantity:        readProduct.Quantity,
+			ProductDetailId: readProduct.ProductDetailId,
 		}
 
 		productObject.Varieties = append(productObject.Varieties, newVariety)
@@ -159,7 +160,7 @@ func (product *productStore) GetProductListWithFilters(filters map[string]string
 		err = rows.Scan(
 			&readProduct.ProductID, &readProduct.Name, &readProduct.Description, &readProduct.CreatedAt, &readProduct.UpdatedAt,
 			&readProduct.SellerID, &readProduct.BrandID, &readProduct.Size, &readProduct.Color, &readProduct.Image,
-			&readProduct.Price, &readProduct.Quantity, &readProduct.BrandName,
+			&readProduct.Price, &readProduct.Quantity, &readProduct.ProductDetailId, &readProduct.BrandName,
 		)
 
 		if err != nil {
@@ -189,11 +190,12 @@ func (product *productStore) GetProductListWithFilters(filters map[string]string
 		}
 
 		newVariety := dto.ResponseVarities{
-			Color:    readProduct.Color,
-			Image:    readProduct.Image,
-			Size:     readProduct.Size,
-			Price:    readProduct.Price,
-			Quantity: readProduct.Quantity,
+			Color:           readProduct.Color,
+			Image:           readProduct.Image,
+			Size:            readProduct.Size,
+			Price:           readProduct.Price,
+			Quantity:        readProduct.Quantity,
+			ProductDetailId: readProduct.ProductDetailId,
 		}
 
 		productObject[index].Varieties = append(productObject[index].Varieties, newVariety)

@@ -25,19 +25,20 @@ type Detail struct {
 }
 
 type ReadProduct struct {
-	ProductID   int
-	Name        string
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	SellerID    int
-	BrandName   string
-	BrandID     int
-	Size        int
-	Color       string
-	Image       string
-	Price       float64
-	Quantity    int
+	ProductID       int
+	Name            string
+	Description     string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	SellerID        int
+	BrandName       string
+	BrandID         int
+	Size            int
+	Color           string
+	Image           string
+	Price           float64
+	Quantity        int
+	ProductDetailId int
 }
 
 type ResponseProduct struct {
@@ -53,11 +54,12 @@ type ResponseProduct struct {
 }
 
 type ResponseVarities struct {
-	Color    string  `json:"color"`
-	Image    string  `json:"image"`
-	Size     int     `json:"size"`
-	Quantity int     `json:"quantity"`
-	Price    float64 `json:"price"`
+	Color           string  `json:"color"`
+	Image           string  `json:"image"`
+	Size            int     `json:"size"`
+	Quantity        int     `json:"quantity"`
+	Price           float64 `json:"price"`
+	ProductDetailId int     `json:"product_detail_id"`
 }
 
 type UpdateProductRequest struct {

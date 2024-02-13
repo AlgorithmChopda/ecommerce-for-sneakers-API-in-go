@@ -28,7 +28,7 @@ const UpdateProductDetail = `UPDATE productdetail
 							 WHERE id = $1 AND seller_id = $4`
 
 func getQueryForFilters(filters map[string]string, skip, limit int) string {
-	var rawQuery string = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity, b.name AS brand_name 
+	var rawQuery string = `SELECT p.*, pd.size, pd.color, pd.image, pd.price, pd.quantity, pd.id, b.name AS brand_name 
 						   from product as p 
 						   JOIN productdetail as pd ON p.id = pd.product_id 
 						   JOIN brand b ON p.brand_id = b.id `
@@ -52,7 +52,7 @@ func getQueryForFilters(filters map[string]string, skip, limit int) string {
 		}
 	}
 	rawQuery = strings.TrimSuffix(rawQuery, "AND ")
-	rawQuery += fmt.Sprintf(" ORDER BY id ")
+	rawQuery += fmt.Sprintf(" ORDER BY p.id ")
 	// rawQuery += fmt.Sprintf(" ORDER BY id OFFSET %d LIMIT %d", skip, limit)
 
 	return rawQuery
