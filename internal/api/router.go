@@ -14,17 +14,16 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 
 	// UserRoutes
 	userRouter := router.PathPrefix("/user").Subrouter()
-	// seller buyer admin login
 	userRouter.HandleFunc("/login", LoginUserHandler(deps.UserService)).Methods(http.MethodPost)
 	userRouter.HandleFunc("/register", RegisterUserHandler(deps.UserService)).Methods(http.MethodPost)
-	userRouter.HandleFunc("/register/admin", middleware.CheckAuth(RegisterAdminHandler(deps.UserService), constants.ADMIN)).Methods(http.MethodPost)
+
 	userRouter.HandleFunc("", middleware.CheckAuth(GetUserListHandler(deps.UserService), constants.ADMIN)).Methods(http.MethodGet)
 	userRouter.HandleFunc("/profile", middleware.CheckAuth(GetUserProfileHandler(deps.UserService), constants.ALL)).Methods(http.MethodGet)
 
 	// Seller
 	sellerRouter := router.PathPrefix("/seller").Subrouter()
 	sellerRouter.HandleFunc("", middleware.CheckAuth(GetAllSellersHandler(deps.SellerService), constants.ADMIN)).Methods(http.MethodGet)
-	sellerRouter.HandleFunc("", middleware.CheckAuth(RegisterSellerHandler(deps.SellerService), constants.ADMIN)).Methods(http.MethodPost)
+	sellerRouter.HandleFunc("/register", middleware.CheckAuth(RegisterSellerHandler(deps.SellerService), constants.ADMIN)).Methods(http.MethodPost)
 	sellerRouter.HandleFunc("/{id}", middleware.CheckAuth(DeleteSellerHandler(deps.SellerService), constants.ADMIN)).Methods(http.MethodDelete)
 
 	// Product
@@ -46,6 +45,9 @@ func NewRouter(deps app.Dependencies) *mux.Router {
 	orderPlacedRouted := router.PathPrefix("/order").Subrouter()
 	orderPlacedRouted.HandleFunc("", middleware.CheckAuth(GetUserPlacedOrderHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodGet)
 	orderPlacedRouted.HandleFunc("/{id}", middleware.CheckAuth(GetPlacedOrderDetailsHandler(deps.OrderService), constants.BUYER)).Methods(http.MethodGet)
+
+	adminRouter := router.PathPrefix("/admin").Subrouter()
+	adminRouter.HandleFunc("/register", middleware.CheckAuth(RegisterAdminHandler(deps.UserService), constants.ADMIN)).Methods(http.MethodPost)
 
 	return router
 }
