@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -386,8 +385,6 @@ func TestGetProductWithFilterHandler(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.setup(websitesSvc)
-			url := "/product" + test.input
-			fmt.Println(url)
 			req, err := http.NewRequest("GET", "/product?color=red&brand=puma&size=7", bytes.NewBuffer([]byte(test.input)))
 			if err != nil {
 				t.Fatal(err)

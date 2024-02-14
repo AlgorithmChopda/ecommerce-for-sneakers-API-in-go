@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
@@ -27,7 +26,7 @@ func (user *userStore) CreateUser(userInfo []any) error {
 		return err
 	}
 
-	fmt.Println("user created")
+	// fmt.Println("user created")
 	return nil
 }
 
@@ -79,14 +78,14 @@ func (user *userStore) GetUserList(roleId int) ([]dto.UserResponseObject, error)
 	if roleId == -1 {
 		currRows, err := user.DB.Query(GetBuyerAndSellerList, constants.BUYER, constants.SELLER)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, errors.New("error while fetching user records")
 		}
 		rows = currRows
 	} else {
 		currRows, err := user.DB.Query(GetBuyerOrSellerList, roleId)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, errors.New("error while fetching user records")
 		}
 		rows = currRows
@@ -109,7 +108,7 @@ func (user *userStore) GetUserList(roleId int) ([]dto.UserResponseObject, error)
 			&currentUser.Role,
 		)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, errors.New("error while fetching user records")
 		}
 
@@ -138,7 +137,7 @@ func (user *userStore) GetUserProfile(userId int) (dto.UserResponseObject, error
 		&userDetail.Role,
 	)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return dto.UserResponseObject{}, errors.New("error while fetching user details")
 	}
 

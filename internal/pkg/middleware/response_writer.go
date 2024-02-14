@@ -22,14 +22,14 @@ func SuccessResponse(w http.ResponseWriter, status int, data any, message string
 
 	out, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Println("cannot marshal success response payload")
+		// fmt.Println("cannot marshal success response payload")
 		writeServerErrorResponse(w)
 		return
 	}
 
 	_, err = w.Write(out)
 	if err != nil {
-		fmt.Println("cannot write json success response")
+		// fmt.Println("cannot write json success response")
 		writeServerErrorResponse(w)
 		return
 	}
@@ -37,7 +37,7 @@ func SuccessResponse(w http.ResponseWriter, status int, data any, message string
 
 func ErrorResponse(w http.ResponseWriter, httpStatus int, err error) {
 	// Printing the error
-	fmt.Println(err)
+	// fmt.Println(err)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(httpStatus)
@@ -48,14 +48,14 @@ func ErrorResponse(w http.ResponseWriter, httpStatus int, err error) {
 
 	out, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Println("error occurred while marshaling response payload")
+		// fmt.Println("error occurred while marshaling response payload")
 		writeServerErrorResponse(w)
 		return
 	}
 
 	_, err = w.Write(out)
 	if err != nil {
-		fmt.Println("error occurred while writing response")
+		// fmt.Println("error occurred while writing response")
 		writeServerErrorResponse(w)
 		return
 	}
@@ -65,6 +65,6 @@ func writeServerErrorResponse(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	_, err := w.Write([]byte(fmt.Sprintf("{\"message\":%s}", "internal server error")))
 	if err != nil {
-		fmt.Println("error occurred while writing response")
+		// fmt.Println("error occurred while writing response")
 	}
 }

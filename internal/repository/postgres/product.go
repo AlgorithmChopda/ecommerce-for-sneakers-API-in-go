@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
@@ -52,7 +51,7 @@ func (product *productStore) GetAllProductsAndDetail() (*sql.Rows, error) {
 func (product *productStore) GetProductById(productId int) (dto.ResponseProduct, error) {
 	rows, err := product.DB.Query(GetProductById, productId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return dto.ResponseProduct{}, errors.New("error while fetching product")
 	}
 
@@ -67,7 +66,7 @@ func (product *productStore) GetProductById(productId int) (dto.ResponseProduct,
 		)
 
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return dto.ResponseProduct{}, errors.New("error while fetching product")
 		}
 
@@ -106,13 +105,13 @@ func (product *productStore) GetProductById(productId int) (dto.ResponseProduct,
 func (product *productStore) UpdateProduct(productId int, name, description string, sellerId int) error {
 	res, err := product.DB.Exec(UpdateProduct, productId, name, description, sellerId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while updating product")
 	}
 
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while updating product")
 	}
 
@@ -126,13 +125,13 @@ func (product *productStore) UpdateProduct(productId int, name, description stri
 func (product *productStore) UpdateProductDetail(productDetailId, quantity int) error {
 	res, err := product.DB.Exec(UpdateProductDetail, productDetailId, quantity)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while updating product detail")
 	}
 
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while updating product detail")
 	}
 
@@ -146,13 +145,13 @@ func (product *productStore) UpdateProductDetail(productDetailId, quantity int) 
 func (product *productStore) UpdateProductPriceAndQuantity(sellerId, productDetailId, quantity, price int) error {
 	res, err := product.DB.Exec(UpdateProductPriceAndQuantity, sellerId, productDetailId, quantity, price)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while updating product detail")
 	}
 
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while updating product detail")
 	}
 
@@ -167,7 +166,7 @@ func (product *productStore) GetProductListWithFilters(filters map[string]string
 	rawQuery := getQueryForFilters(filters, skip, limit)
 	rows, err := product.DB.Query(rawQuery)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return nil, errors.New("error while fetching products")
 	}
 
@@ -184,7 +183,7 @@ func (product *productStore) GetProductListWithFilters(filters map[string]string
 		)
 
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, errors.New("error while fetching product")
 		}
 

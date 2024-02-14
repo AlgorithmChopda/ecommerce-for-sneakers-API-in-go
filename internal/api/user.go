@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/app/user"
@@ -17,7 +16,7 @@ func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *ht
 		var req dto.RegisterUserRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			fmt.Println("invalid input request")
+			// fmt.Println("invalid input request")
 			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
 		}
@@ -45,7 +44,7 @@ func LoginUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *http.
 		var req dto.LoginUserRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			fmt.Println("invalid input request")
+			// fmt.Println("invalid input request")
 			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
 		}
@@ -106,7 +105,7 @@ func RegisterAdminHandler(userSvc user.Service) func(w http.ResponseWriter, r *h
 		var req dto.RegisterUserRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			fmt.Println("invalid input request")
+			// fmt.Println("invalid input request")
 			middleware.ErrorResponse(w, http.StatusBadRequest, err)
 			return
 		}

@@ -2,7 +2,6 @@ package user
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
@@ -33,7 +32,7 @@ func NewService(userRepoObject repository.UserRepository, roleRepoObject reposit
 }
 
 func (svc *service) RegisterUser(userInfo dto.RegisterUserRequest, userRole string) (dto.UserRegisterResponseObject, error) {
-	fmt.Println(userInfo.DateOfBirth)
+	// fmt.Println(userInfo.DateOfBirth)
 	parsedDOB, err := helpers.ParseDate(userInfo.DateOfBirth)
 	if err != nil {
 		return dto.UserRegisterResponseObject{}, err
@@ -98,7 +97,7 @@ func (svc *service) LoginUser(email, passsword string) (string, error) {
 
 	token, err := helpers.CreateToken(id, role)
 	if err != nil {
-		fmt.Println("Error :", err)
+		// fmt.Println("Error :", err)
 		return "", errors.New("error while creating token : ")
 	}
 

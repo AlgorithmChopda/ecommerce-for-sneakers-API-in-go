@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -37,7 +36,7 @@ func VerifyToken(tokenString string) (*jwt.Token, error) {
 	})
 
 	if err != nil || !token.Valid {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return nil, apperrors.UnauthorizedAccess{Message: "invalid token"}
 	}
 

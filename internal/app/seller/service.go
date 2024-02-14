@@ -1,8 +1,6 @@
 package seller
 
 import (
-	"fmt"
-
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/dto"
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/helpers"
@@ -37,7 +35,7 @@ func (sellerSvc *service) RegisterSeller(sellerInfo dto.RegisterSellerRequest) e
 		return err
 	}
 
-	fmt.Println("line 39")
+	// fmt.Println("line 39")
 	isPresent := sellerSvc.userRepo.IsUserWithEmailPresent(sellerInfo.Email)
 	if isPresent {
 		return apperrors.UserAlreadyPresent{}

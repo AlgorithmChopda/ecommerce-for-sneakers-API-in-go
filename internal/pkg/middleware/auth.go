@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/constants"
@@ -23,7 +22,7 @@ func CheckAuth(handlerFunc func(w http.ResponseWriter, r *http.Request), access 
 		tokenString = tokenString[len("Bearer "):]
 		token, err := helpers.VerifyToken(tokenString)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			ErrorResponse(w, http.StatusUnauthorized, errors.New("unauthorized access"))
 			return
 		}

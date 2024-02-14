@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
@@ -25,7 +24,7 @@ func (order *orderStore) Create(userId int) (int, error) {
 	var orderId int
 	err := order.DB.QueryRow(CreateOrder, userId).Scan(&orderId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return -1, errors.New("error while creating cart")
 	}
 
@@ -35,7 +34,7 @@ func (order *orderStore) Create(userId int) (int, error) {
 func (order *orderStore) IsOrderPresent(userId int) (bool, error) {
 	rows, err := order.DB.Query(OrderWithUserId, userId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return false, errors.New("error while checking cart for user")
 	}
 
@@ -61,7 +60,7 @@ func (order *orderStore) GetBuyerId(orderId int) (int, error) {
 func (order *orderStore) CheckOrderValid(userId, orderId int) (bool, error) {
 	rows, err := order.DB.Query(CheckOrderValid, userId, orderId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return false, errors.New("error while checking cart for user")
 	}
 
@@ -189,13 +188,13 @@ func (order *orderStore) UpdateOrderItem(userId, cartId, productDetailId, requir
 func (order *orderStore) PlaceOrder(userId, orderId int, shippingAddress string) error {
 	rows, err := order.DB.Exec(PlaceOrder, orderId, shippingAddress)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while placing order")
 	}
 
 	rowsAffected, err := rows.RowsAffected()
 	if err != nil || rowsAffected == 0 {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return errors.New("error while placing order")
 	}
 
@@ -215,7 +214,7 @@ func (order *orderStore) GetOrderItemCount(orderId int) (int, error) {
 func (order *orderStore) IsOrderPresentWithOrderId(orderId int) (bool, error) {
 	rows, err := order.DB.Query(OrderWithOrderId, orderId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return false, errors.New("error while checking order for user")
 	}
 
@@ -228,7 +227,7 @@ func (order *orderStore) IsOrderPresentWithOrderId(orderId int) (bool, error) {
 func (order *orderStore) GetAllOrderItems(orderId int) (any, error) {
 	rows, err := order.DB.Query(GetOrderItems, orderId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return nil, errors.New("error while fetching cart items")
 	}
 
@@ -246,7 +245,7 @@ func (order *orderStore) GetAllOrderItems(orderId int) (any, error) {
 			&currentProduct.Quantity,
 		)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, errors.New("error while fetching cart items")
 		}
 
@@ -256,7 +255,7 @@ func (order *orderStore) GetAllOrderItems(orderId int) (any, error) {
 	var totalAmount float64
 	err = order.DB.QueryRow(GetOrderAmount, orderId).Scan(&totalAmount)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return nil, errors.New("error while fetching cart items")
 	}
 
@@ -280,13 +279,13 @@ func (order *orderStore) GetPlacedOrderDetails(userId, orderId int) (any, error)
 	err := row.Scan(&totalAmount, &orderDate, &shippingAddress)
 
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return nil, apperrors.NotFoundError{Message: "no such order found"}
 	}
 
 	rows, err := order.DB.Query(GetOrderItems, orderId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return nil, errors.New("error while fetching order items")
 	}
 
@@ -304,7 +303,7 @@ func (order *orderStore) GetPlacedOrderDetails(userId, orderId int) (any, error)
 			&currentProduct.Quantity,
 		)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, errors.New("error while fetching cart items")
 		}
 
@@ -344,7 +343,7 @@ func (order *orderStore) GetUserPlacedOrders(userId int) ([]dto.UserOrderRespons
 		// get order items
 		rows, err := order.DB.Query(GetOrderItems, currentOrderId)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, errors.New("error while fetching order items")
 		}
 
@@ -360,7 +359,7 @@ func (order *orderStore) GetUserPlacedOrders(userId int) ([]dto.UserOrderRespons
 				&currentProduct.Quantity,
 			)
 			if err != nil {
-				fmt.Println(err)
+				// fmt.Println(err)
 				return nil, errors.New("error while fetching cart items")
 			}
 
@@ -397,7 +396,7 @@ func (order *orderStore) GetUpdateItemsList(orderId int) ([]int, []int, error) {
 	// check if the items desired quantity available or not
 	rows, err := order.DB.Query(GetOrderItemProductIdAndQuantity, orderId)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		return nil, nil, errors.New("error while placing order")
 	}
 
@@ -407,19 +406,19 @@ func (order *orderStore) GetUpdateItemsList(orderId int) ([]int, []int, error) {
 		err = rows.Scan(&curProductDetailId, &curQuantity)
 
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, nil, errors.New("error while placing o/rder")
 		}
 
 		var actualQuantity int
 		err := order.DB.QueryRow(GetProductQuantity, curProductDetailId).Scan(&actualQuantity)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 			return nil, nil, errors.New("error while placing o/rder")
 		}
 
 		if actualQuantity < curQuantity {
-			fmt.Println("id:", curProductDetailId, actualQuantity, curQuantity)
+			// fmt.Println("id:", curProductDetailId, actualQuantity, curQuantity)
 			return nil, nil, apperrors.InsufficientProductQuantity{}
 		}
 
