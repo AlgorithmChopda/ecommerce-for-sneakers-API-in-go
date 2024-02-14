@@ -35,7 +35,7 @@ func RegisterUserHandler(userSvc user.Service) func(w http.ResponseWriter, r *ht
 			return
 		}
 
-		middleware.SuccessResponse(w, http.StatusAccepted, user, "User Created")
+		middleware.SuccessResponse(w, http.StatusCreated, user, "User Created")
 	}
 }
 

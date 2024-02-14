@@ -131,7 +131,7 @@ func TestRegisterUserHandler(t *testing.T) {
 			setup: func(mockSvc *mocks.Service) {
 				mockSvc.On("RegisterUser", mock.Anything, mock.Anything).Return(dto.UserRegisterResponseObject{}, nil).Once()
 			},
-			expectedStatusCode: http.StatusAccepted,
+			expectedStatusCode: http.StatusCreated,
 		},
 		{
 			name: "Email already present",
