@@ -126,7 +126,7 @@ github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/product
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/product.go:172.3,173.17 2 0
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/product.go:173.17,177.4 3 0
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/product.go:179.3,179.78 1 0
-github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/router.go:12.51,54.2 28 0
+github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/router.go:12.51,55.2 29 0
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:14.99,15.54 1 1
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:15.54,18.17 3 4
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:18.17,21.4 2 1
@@ -145,6 +145,12 @@ github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:61.3,62.17 2 2
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:62.17,66.4 3 1
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:68.3,68.83 1 1
+github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:72.105,73.54 1 0
+github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:73.54,75.17 2 0
+github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:75.17,78.4 2 0
+github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:80.3,81.17 2 0
+github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:81.17,85.4 3 0
+github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/seller.go:87.3,87.103 1 0
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/user.go:15.93,16.54 1 1
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/user.go:16.54,19.17 3 4
 github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/api/user.go:19.17,23.4 3 1

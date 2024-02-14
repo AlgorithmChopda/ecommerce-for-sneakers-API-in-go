@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestRegisterUser(t *testing.T) {
+func TestRegisterSeller(t *testing.T) {
 	userRepo := mocks.NewUserRepository(t)
 	roleRepo := mocks.NewRoleRepository(t)
 	sellerRepo := mocks.NewSellerRepository(t)
@@ -148,6 +148,99 @@ func TestRegisterUser(t *testing.T) {
 
 			// test service
 			err := service.RegisterSeller(test.input)
+
+			if (err != nil) != test.isErrorExpected {
+				t.Errorf("Test Failed, expected error to be %v, but got err %v", test.isErrorExpected, err != nil)
+			}
+		})
+	}
+}
+
+func TestGetSellerList(t *testing.T) {
+	userRepo := mocks.NewUserRepository(t)
+	roleRepo := mocks.NewRoleRepository(t)
+	sellerRepo := mocks.NewSellerRepository(t)
+
+	service := NewService(sellerRepo, userRepo, roleRepo)
+
+	tests := []struct {
+		name            string
+		setup           func(sellerRepo *mocks.SellerRepository, userRepo *mocks.UserRepository, roleRepo *mocks.RoleRepository)
+		isErrorExpected bool
+	}{
+		{
+			name: "role error",
+			setup: func(sellerRepo *mocks.SellerRepository, userRepo *mocks.UserRepository, roleRepo *mocks.RoleRepository) {
+				roleRepo.On("GetRoleId", mock.Anything).Return(1, errors.New("error")).Once()
+			},
+			isErrorExpected: true,
+		},
+		{
+			name: "role error",
+			setup: func(sellerRepo *mocks.SellerRepository, userRepo *mocks.UserRepository, roleRepo *mocks.RoleRepository) {
+				roleRepo.On("GetRoleId", mock.Anything).Return(1, nil).Once()
+				sellerRepo.On("GetAllSellers", 1).Return([]dto.SellerResponseObject{}, errors.New("error")).Once()
+			},
+			isErrorExpected: true,
+		},
+		{
+			name: "role error",
+			setup: func(sellerRepo *mocks.SellerRepository, userRepo *mocks.UserRepository, roleRepo *mocks.RoleRepository) {
+				roleRepo.On("GetRoleId", mock.Anything).Return(1, nil).Once()
+				sellerRepo.On("GetAllSellers", 1).Return([]dto.SellerResponseObject{}, nil).Once()
+			},
+			isErrorExpected: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.setup(sellerRepo, userRepo, roleRepo)
+
+			// test service
+			_, err := service.GetSellerList()
+
+			if (err != nil) != test.isErrorExpected {
+				t.Errorf("Test Failed, expected error to be %v, but got err %v", test.isErrorExpected, err != nil)
+			}
+		})
+	}
+}
+
+func TestDeleteSellerList(t *testing.T) {
+	userRepo := mocks.NewUserRepository(t)
+	roleRepo := mocks.NewRoleRepository(t)
+	sellerRepo := mocks.NewSellerRepository(t)
+
+	service := NewService(sellerRepo, userRepo, roleRepo)
+
+	tests := []struct {
+		name            string
+		setup           func(sellerRepo *mocks.SellerRepository, userRepo *mocks.UserRepository, roleRepo *mocks.RoleRepository)
+		isErrorExpected bool
+	}{
+		{
+			name: "role error",
+			setup: func(sellerRepo *mocks.SellerRepository, userRepo *mocks.UserRepository, roleRepo *mocks.RoleRepository) {
+				sellerRepo.On("DeleteSeller", 1).Return(errors.New("error")).Once()
+			},
+			isErrorExpected: true,
+		},
+		{
+			name: "role error",
+			setup: func(sellerRepo *mocks.SellerRepository, userRepo *mocks.UserRepository, roleRepo *mocks.RoleRepository) {
+				sellerRepo.On("DeleteSeller", 1).Return(nil).Once()
+			},
+			isErrorExpected: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.setup(sellerRepo, userRepo, roleRepo)
+
+			// test service
+			err := service.DeleteSeller(1)
 
 			if (err != nil) != test.isErrorExpected {
 				t.Errorf("Test Failed, expected error to be %v, but got err %v", test.isErrorExpected, err != nil)

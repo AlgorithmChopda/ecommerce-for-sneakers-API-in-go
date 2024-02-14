@@ -93,7 +93,6 @@ func (svc *service) LoginUser(email, passsword string) (string, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(passsword))
 	if err != nil {
-		fmt.Println("in here")
 		return "", apperrors.EmptyError{Message: "invalid login details"}
 	}
 
