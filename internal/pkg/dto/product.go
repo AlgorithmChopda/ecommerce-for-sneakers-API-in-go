@@ -1,0 +1,122 @@
+package dto
+
+import (
+	"errors"
+	"time"
+
+	"github.com/AlgorithmChopda/ecommerce-for-sneakers-API-in-go/internal/pkg/apperrors"
+)
+
+type CreateProductRequest struct {
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Brand       string    `json:"brand"`
+	Varieties   []Variety `json:"variety"`
+}
+
+type Variety struct {
+	Color   string   `json:"color"`
+	Image   string   `json:"image"`
+	Details []Detail `json:"detail"`
+}
+
+type Detail struct {
+	Size     int     `json:"size"`
+	Quantity int     `json:"quantity"`
+	Price    float64 `json:"price"`
+}
+
+type ReadProduct struct {
+	ProductID       int
+	Name            string
+	Description     string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	SellerID        int
+	BrandName       string
+	BrandID         int
+	Size            int
+	Color           string
+	Image           string
+	Price           float64
+	Quantity        int
+	ProductDetailId int
+}
+
+type ResponseProduct struct {
+	Id          int                `json:"id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	CreatedAt   time.Time          `json:"created_at"`
+	UpdatedAt   time.Time          `json:"updated_at"`
+	SellerID    int                `json:"seller_id"`
+	BrandID     int                `json:"brand_id"`
+	BrandName   string             `json:"brand_name"`
+	Varieties   []ResponseVarities `json:"variety"`
+}
+
+type ResponseVarities struct {
+	Color           string  `json:"color"`
+	Image           string  `json:"image"`
+	Size            int     `json:"size"`
+	Quantity        int     `json:"quantity"`
+	Price           float64 `json:"price"`
+	ProductDetailId int     `json:"product_detail_id"`
+}
+
+type UpdateProductRequest struct {
+	Name        string
+	Description string
+}
+
+type UpdateProductDetailRequest struct {
+	Price    int `json:"price"`
+	Quantity int `json:"quantity"`
+}
+
+func (req *UpdateProductDetailRequest) Validate() error {
+	err := ValidateStruct(*req)
+	if err != nil {
+		return err
+	}
+
+	if req.Price <= 0 {
+		return apperrors.EmptyError{Message: "price cannot be less than or equal to 0"}
+	}
+
+	if req.Quantity < 0 {
+		return apperrors.EmptyError{Message: "quantity cannot be negative"}
+	}
+
+	return nil
+}
+
+func (req *CreateProductRequest) Validate() error {
+	err := ValidateStruct(*req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (req *UpdateProductRequest) Validate() error {
+	err := ValidateStruct(*req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type ProductCartRequest struct {
+	Quantity int
+}
+
+func (req ProductCartRequest) Validate() error {
+	if req.Quantity <= 0 {
+		return errors.New("invalid product quantity")
+	}
+
+	return nil
+}
